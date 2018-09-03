@@ -1,12 +1,12 @@
 import configparser
 import io
 
-from pyscaffold.api import helpers, Extension
-
+from pyscaffold.api import helpers
+from pyscaffold.extensions.no_skeleton import NoSkeleton
 from .templates import extension, setup
 
 
-class CustomExtension(Extension):
+class CustomExtension(NoSkeleton):
     """
     Test
     """
@@ -22,7 +22,7 @@ class CustomExtension(Extension):
                 after='add_custom_extension_structure')
 
     def add_custom_extension_structure(self, struct, opts):
-        custom_extension_file_content = extension()
+        custom_extension_file_content = extension(self.get_class_name_from_opts(opts))
         filename = "{}.py".format(opts["package"])
         struct = helpers.ensure(struct, [opts["project"], "src", opts["package"], filename],
                                 custom_extension_file_content, helpers.NO_OVERWRITE)
@@ -40,10 +40,14 @@ class CustomExtension(Extension):
         config.add_section("options.entry_points")
         config.set("options.entry_points", "pyscaffold.cli",
                    "{}={}.{}:{}".format(opts["package"], opts["package"],
-                                                        opts["package"], "TestClass"))
+                                                        opts["package"], self.get_class_name_from_opts(opts)))
         buffer = io.StringIO()
         config.write(buffer)
 
         struct[opts["project"]]["setup.cfg"] = buffer.getvalue()
 
         return struct, opts
+    @staticmethod
+    def get_class_name_from_opts(opts):
+        pkg_name = opts["package"]
+        return "".join(map(str.capitalize, pkg_name.split("_")))
