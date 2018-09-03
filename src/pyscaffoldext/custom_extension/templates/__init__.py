@@ -17,3 +17,8 @@ def extension():
 def setup(opts):
     template = get_template("setup.py")
     return template.safe_substitute(opts)
+
+def entry_point(opts):
+
+    template = get_template("entry_point")
+    return template.safe_substitute(opts)

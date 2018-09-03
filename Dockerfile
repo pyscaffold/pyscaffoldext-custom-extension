@@ -9,9 +9,7 @@ RUN  git config --global user.name "Your Name"
 
 WORKDIR /test
 RUN putup --custom-extension --no-skeleton test_extension
-RUN ls test_extension
 WORKDIR /test/test_extension
-RUN ls .
 RUN python setup.py install
 RUN putup --test-extension /code/result_project
 

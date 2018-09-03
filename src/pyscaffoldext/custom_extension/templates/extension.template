@@ -1,4 +1,9 @@
 from pyscaffold.api import Extension
 
 class ${extension_class_name}(Extension):
-    pass
+    """
+    Documentation for ${extension_class_name}
+    """
+
+    def activate(self, actions):
+        return actions
