@@ -3,7 +3,8 @@ import io
 
 from pyscaffold.api import helpers
 from pyscaffold.extensions.no_skeleton import NoSkeleton
-from .templates import extension, setup
+
+from .templates import extension
 
 
 class CustomExtension(NoSkeleton):
@@ -22,13 +23,15 @@ class CustomExtension(NoSkeleton):
                 after='add_custom_extension_structure')
 
     def add_custom_extension_structure(self, struct, opts):
-        custom_extension_file_content = extension(self.get_class_name_from_opts(opts))
+        custom_extension_file_content = extension(
+                self.get_class_name_from_opts(opts))
         filename = "{}.py".format(opts["package"])
-        struct = helpers.ensure(struct, [opts["project"], "src", opts["package"], filename],
-                                custom_extension_file_content, helpers.NO_OVERWRITE)
-
-        struct = helpers.ensure(struct, [opts["project"], "setup.py"],
-                                setup(opts), helpers.NO_OVERWRITE)
+        struct = helpers.ensure(struct, [opts["project"],
+                                         "src",
+                                         opts["package"],
+                                         filename],
+                                custom_extension_file_content,
+                                helpers.NO_OVERWRITE)
 
         return struct, opts
 
@@ -39,14 +42,17 @@ class CustomExtension(NoSkeleton):
         config.remove_section("options.entry_points")
         config.add_section("options.entry_points")
         config.set("options.entry_points", "pyscaffold.cli",
-                   "{}={}.{}:{}".format(opts["package"], opts["package"],
-                                                        opts["package"], self.get_class_name_from_opts(opts)))
+                   "{}={}.{}:{}".format(opts["package"],
+                                        opts["package"],
+                                        opts["package"],
+                                        self.get_class_name_from_opts(opts)))
         buffer = io.StringIO()
         config.write(buffer)
 
         struct[opts["project"]]["setup.cfg"] = buffer.getvalue()
 
         return struct, opts
+
     @staticmethod
     def get_class_name_from_opts(opts):
         pkg_name = opts["package"]
