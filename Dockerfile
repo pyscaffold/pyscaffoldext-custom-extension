@@ -1,5 +1,5 @@
 FROM python:latest
-RUN pip install pyscaffold
+RUN pip install pyscaffold==3.1rc2
 WORKDIR /code
 COPY . /code/
 RUN python setup.py install
