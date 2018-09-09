@@ -17,6 +17,12 @@ class CustomExtension(NoSkeleton):
                 actions,
                 self.add_custom_extension_structure,
                 after='define_structure')
+        actions = self.register(
+                actions,
+                self.set_namespace,
+                before="define_structure"
+
+        )
         return self.register(
                 actions,
                 self.add_entry_point,
@@ -57,3 +63,8 @@ class CustomExtension(NoSkeleton):
     def get_class_name_from_opts(opts):
         pkg_name = opts["package"]
         return "".join(map(str.capitalize, pkg_name.split("_")))
+
+    def set_namespace(self, struct, opts):
+
+        opts["namespace"] = "pyscaffoldext"
+        return struct, opts
