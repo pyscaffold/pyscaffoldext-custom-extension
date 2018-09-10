@@ -2,8 +2,8 @@ import configparser
 import io
 
 from pyscaffold.api import helpers
-from pyscaffold.extensions.no_skeleton import NoSkeleton
 from pyscaffold.extensions.namespace import add_namespace
+from pyscaffold.extensions.no_skeleton import NoSkeleton
 from pyscaffold.utils import prepare_namespace
 
 from .templates import extension
@@ -16,23 +16,23 @@ class CustomExtension(NoSkeleton):
 
     def activate(self, actions):
         actions = self.register(
-                actions,
-                self.add_custom_extension_structure,
-                after='define_structure')
+            actions,
+            self.add_custom_extension_structure,
+            after='define_structure')
         actions = self.register(
-                actions,
+            actions,
             set_pyscaffoldext_namespace,
-                before="define_structure"
+            before="define_structure"
 
         )
         return self.register(
-                actions,
-                self.add_entry_point,
-                after='add_custom_extension_structure')
+            actions,
+            self.add_entry_point,
+            after='add_custom_extension_structure')
 
     def add_custom_extension_structure(self, struct, opts):
         custom_extension_file_content = extension(
-                self.get_class_name_from_opts(opts))
+            self.get_class_name_from_opts(opts))
         filename = "{}.py".format(opts["package"])
         struct = helpers.ensure(struct, [opts["project"],
                                          "src",
@@ -66,6 +66,12 @@ class CustomExtension(NoSkeleton):
         pkg_name = opts["package"]
         return "".join(map(str.capitalize, pkg_name.split("_")))
 
+
 def set_pyscaffoldext_namespace(struct, opts):
-    opts["namespace"] = prepare_namespace("pyscaffoldext")
-    return add_namespace(struct,opts)
+    PYSCAFFOLDEXT_NAMESPACE = "pyscaffoldext"
+    namespace_parameter = opts.get("namespace", None)
+    namespace_with_pyscaffoldext = ".".join([PYSCAFFOLDEXT_NAMESPACE, namespace_parameter]) \
+        if namespace_parameter else \
+        PYSCAFFOLDEXT_NAMESPACE
+    opts["namespace"] = prepare_namespace(namespace_with_pyscaffoldext)
+    return add_namespace(struct, opts)
