@@ -3,6 +3,8 @@ import io
 
 from pyscaffold.api import helpers
 from pyscaffold.extensions.no_skeleton import NoSkeleton
+from pyscaffold.extensions.namespace import add_namespace
+from pyscaffold.utils import prepare_namespace
 
 from .templates import extension
 
@@ -19,7 +21,7 @@ class CustomExtension(NoSkeleton):
                 after='define_structure')
         actions = self.register(
                 actions,
-                self.set_namespace,
+            set_pyscaffoldext_namespace,
                 before="define_structure"
 
         )
@@ -64,7 +66,6 @@ class CustomExtension(NoSkeleton):
         pkg_name = opts["package"]
         return "".join(map(str.capitalize, pkg_name.split("_")))
 
-    def set_namespace(self, struct, opts):
-
-        opts["namespace"] = "pyscaffoldext"
-        return struct, opts
+def set_pyscaffoldext_namespace(struct, opts):
+    opts["namespace"] = prepare_namespace("pyscaffoldext")
+    return add_namespace(struct,opts)
