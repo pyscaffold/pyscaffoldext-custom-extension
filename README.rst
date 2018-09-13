@@ -2,15 +2,15 @@
 pyscaffoldext-custom-extension
 ==============================
 
-
-Add a short description here!
-
+A PyScaffold's extension to create new extensions.
 
 Description
 ===========
 
-A longer description of your project goes here...
-
+This extension serves as a support for the users interested in developing their own PyScaffold's
+extensions, both for private and public release. It configures your project so that you can start
+writing your extension logic and tests right away, taking care of all the wiring required to conform to
+PyScaffold's needs.
 
 Note
 ====
