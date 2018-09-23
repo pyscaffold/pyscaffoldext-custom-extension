@@ -8,6 +8,8 @@ from pyscaffold.utils import prepare_namespace
 
 from .templates import extension
 
+PYSCAFFOLDEXT_NS = "pyscaffoldext"
+
 
 class CustomExtension(NoSkeleton):
     """
@@ -68,10 +70,10 @@ class CustomExtension(NoSkeleton):
 
 
 def set_pyscaffoldext_namespace(struct, opts):
-    PYSCAFFOLDEXT_NAMESPACE = "pyscaffoldext"
     namespace_parameter = opts.get("namespace", None)
-    namespace_with_pyscaffoldext = ".".join([PYSCAFFOLDEXT_NAMESPACE, namespace_parameter]) \
+    namespace_with_pyscaffoldext = ".".join([PYSCAFFOLDEXT_NS,
+                                             namespace_parameter]) \
         if namespace_parameter else \
-        PYSCAFFOLDEXT_NAMESPACE
+        PYSCAFFOLDEXT_NS
     opts["namespace"] = prepare_namespace(namespace_with_pyscaffoldext)
     return add_namespace(struct, opts)
