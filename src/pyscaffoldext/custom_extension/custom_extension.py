@@ -58,8 +58,7 @@ class CustomExtension(NoSkeleton):
                                            opts["namespace"][-1],
                                            opts["package"],
                                            opts["package"],
-                                           self.get_class_name_from_opts(opts)
-                                           )
+                                           self.get_class_name_from_opts(opts))
                    )
         buffer = io.StringIO()
         config.write(buffer)
@@ -75,7 +74,7 @@ class CustomExtension(NoSkeleton):
 
 
 def set_pyscaffoldext_namespace(struct, opts):
-    namespace_parameter = opts.get("namespace", None)
+    namespace_parameter = opts.get("namespace", [])
 
     opts["namespace"] = ".".join([PYSCAFFOLDEXT_NS] + namespace_parameter)
     struct, opts = enforce_namespace_options(struct, opts)
