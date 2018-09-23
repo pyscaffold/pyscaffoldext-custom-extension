@@ -2,9 +2,11 @@ import configparser
 import io
 
 from pyscaffold.api import helpers
-from pyscaffold.extensions.namespace import add_namespace
+from pyscaffold.extensions.namespace import (
+    add_namespace,
+    enforce_namespace_options
+)
 from pyscaffold.extensions.no_skeleton import NoSkeleton
-from pyscaffold.utils import prepare_namespace
 
 from .templates import extension
 
@@ -24,7 +26,7 @@ class CustomExtension(NoSkeleton):
         actions = self.register(
             actions,
             set_pyscaffoldext_namespace,
-            before="define_structure"
+            after="define_structure"
 
         )
         return self.register(
@@ -52,10 +54,13 @@ class CustomExtension(NoSkeleton):
         config.remove_section("options.entry_points")
         config.add_section("options.entry_points")
         config.set("options.entry_points", "pyscaffold.cli",
-                   "{}={}.{}:{}".format(opts["package"],
-                                        opts["package"],
-                                        opts["package"],
-                                        self.get_class_name_from_opts(opts)))
+                   "{}={}.{}.{}:{}".format(opts["package"],
+                                           opts["namespace"][-1],
+                                           opts["package"],
+                                           opts["package"],
+                                           self.get_class_name_from_opts(opts)
+                                           )
+                   )
         buffer = io.StringIO()
         config.write(buffer)
 
@@ -71,9 +76,8 @@ class CustomExtension(NoSkeleton):
 
 def set_pyscaffoldext_namespace(struct, opts):
     namespace_parameter = opts.get("namespace", None)
-    namespace_with_pyscaffoldext = ".".join([PYSCAFFOLDEXT_NS,
-                                             namespace_parameter]) \
-        if namespace_parameter else \
-        PYSCAFFOLDEXT_NS
-    opts["namespace"] = prepare_namespace(namespace_with_pyscaffoldext)
-    return add_namespace(struct, opts)
+
+    opts["namespace"] = ".".join([PYSCAFFOLDEXT_NS] + namespace_parameter)
+    struct, opts = enforce_namespace_options(struct, opts)
+    struct, opts = add_namespace(struct, opts)
+    return struct, opts

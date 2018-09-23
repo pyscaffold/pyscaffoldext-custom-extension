@@ -1,4 +1,5 @@
 from pyscaffold.cli import parse_args
+from pyscaffold.utils import prepare_namespace
 
 from pyscaffoldext.custom_extension.custom_extension import (
     set_pyscaffoldext_namespace
@@ -22,8 +23,10 @@ def test_set_namespace_with_existing_namespace_option():
             "-p", "some_package", "--namespace", "some_namespace"]
     opts = parse_args(args)
     struct = {"project": {"src": {"some_package": {"file1": "Content"}}}}
+    opts["namespace"] = prepare_namespace(opts["namespace"])
     ns_struct, _ = set_pyscaffoldext_namespace(struct, opts)
     ns_pkg_struct = ns_struct["project"]["src"]
     assert ["project"] == list(ns_struct.keys())
     assert "some_package" not in list(ns_struct.keys())
-    assert "some_package" in list(ns_pkg_struct["pyscaffoldext"]["some_namespace"].keys())
+    assert "some_package" in \
+           list(ns_pkg_struct["pyscaffoldext"]["some_namespace"].keys())
