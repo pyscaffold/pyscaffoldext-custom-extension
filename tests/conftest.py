@@ -9,4 +9,26 @@
 """
 from __future__ import print_function, absolute_import, division
 
-# import pytest
+
+from shutil import rmtree
+import pytest
+import os
+import stat
+
+def set_writable(func, path, exc_info):
+    if not os.access(path, os.W_OK):
+        os.chmod(path, stat.S_IWUSR)
+        func(path)
+    else:
+        raise RuntimeError
+
+@pytest.fixture
+def tmpfolder(tmpdir):
+    old_path = os.getcwd()
+    newpath = str(tmpdir)
+    os.chdir(newpath)
+    try:
+        yield tmpdir
+    finally:
+        os.chdir(old_path)
+        rmtree(newpath, onerror=set_writable)
