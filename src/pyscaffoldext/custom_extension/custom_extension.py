@@ -59,7 +59,7 @@ def set_pyscaffoldext_namespace(struct, opts):
     namespace_parameter = opts.get("namespace", None)
     namespace_list = [PYSCAFFOLDEXT_NS]
     if isinstance(namespace_parameter, list):
-        namespace_list = namespace_list+namespace_parameter
+        namespace_list.append(namespace_parameter[-1])
     elif isinstance(namespace_parameter,str):
         namespace_list.append(namespace_parameter)
 
