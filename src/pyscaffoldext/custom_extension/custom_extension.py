@@ -1,7 +1,5 @@
-import configparser
-import io
-
 from pyscaffold.api import helpers
+from pyscaffold.contrib.configupdater import ConfigUpdater
 from pyscaffold.extensions.namespace import (
     add_namespace,
     enforce_namespace_options
@@ -36,7 +34,7 @@ class CustomExtension(NoSkeleton):
 
     def add_entry_point(self, struct, opts):
         setup_cfg_content = struct[opts["project"]]["setup.cfg"][0]
-        config = configparser.ConfigParser()
+        config = ConfigUpdater()
         config.read_string(setup_cfg_content)
         config.remove_section("options.entry_points")
         config.add_section("options.entry_points")
@@ -47,10 +45,8 @@ class CustomExtension(NoSkeleton):
                                            opts["package"],
                                            get_class_name_from_opts(opts))
                    )
-        buffer = io.StringIO()
-        config.write(buffer)
 
-        struct[opts["project"]]["setup.cfg"] = buffer.getvalue()
+        struct[opts["project"]]["setup.cfg"] = str(config)
 
         return struct, opts
 
@@ -60,13 +56,13 @@ def set_pyscaffoldext_namespace(struct, opts):
     namespace_list = [PYSCAFFOLDEXT_NS]
     if isinstance(namespace_parameter, list):
         namespace_list.append(namespace_parameter[-1])
-    elif isinstance(namespace_parameter,str):
+    elif isinstance(namespace_parameter, str):
         namespace_list.append(namespace_parameter)
 
     opts["namespace"] = ".".join(namespace_list)
     struct, opts = enforce_namespace_options(struct, opts)
     if not namespace_parameter:
-        struct, opts = add_namespace(struct,opts)
+        struct, opts = add_namespace(struct, opts)
 
     return struct, opts
 
