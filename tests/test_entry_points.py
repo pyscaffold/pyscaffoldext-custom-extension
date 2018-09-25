@@ -13,7 +13,10 @@ def test_entry_point_with_namespace(tmpfolder):
     assert path_exists("some_extension/setup.cfg")
 
     config_updater = ConfigUpdater()
-    config_updater.read_file(open("some_extension/setup.cfg"))
+
+    with open("some_extension/setup.cfg") as f:
+        config_updater.read_file(f)
+
     entry_point = config_updater.get("options.entry_points",
                                      "pyscaffold.cli").value
     assert entry_point == "some_extension=pyscaffoldext." \
@@ -28,7 +31,8 @@ def test_entry_point(tmpfolder):
     assert path_exists("some_extension/setup.cfg")
 
     config_updater = ConfigUpdater()
-    config_updater.read_file(open("some_extension/setup.cfg"))
+    with open("some_extension/setup.cfg") as f:
+        config_updater.read_file(f)
     entry_point = config_updater.get("options.entry_points",
                                      "pyscaffold.cli").value
     assert entry_point == "some_extension=pyscaffoldext." \
