@@ -11,7 +11,7 @@ def test_add_custom_extension(tmpfolder):
             "extensions": [CustomExtension("custom_ext")]}
     create_project(opts)
     assert path_exists("my_project/src/pyscaffoldext/"
-                       "my_extension/my_extension.py")
+                       "my_extension/extension.py")
 
 
 def test_add_custom_extension_with_namespace(tmpfolder):
@@ -21,7 +21,7 @@ def test_add_custom_extension_with_namespace(tmpfolder):
     opts = parse_args(args)
     create_project(opts)
     assert path_exists("some_extension/src/pyscaffoldext/"
-                       "test/some_extension/some_extension.py")
+                       "test/some_extension/extension.py")
 
 
 def test_add_custom_extension_with_namespace_2(tmpfolder):
@@ -32,7 +32,7 @@ def test_add_custom_extension_with_namespace_2(tmpfolder):
     create_project(opts)
     assert path_exists(
             "some_extension/src/pyscaffoldext/test/second_level/"
-            "some_extension/some_extension.py")
+            "some_extension/extension.py")
 
 
 def test_add_custom_extension_with_namespace_3(tmpfolder):
@@ -43,4 +43,4 @@ def test_add_custom_extension_with_namespace_3(tmpfolder):
     create_project(opts)
     assert path_exists(
             "some_extension/src/pyscaffoldext/test/second_level/"
-            "third_level/some_extension/some_extension.py")
+            "third_level/some_extension/extension.py")

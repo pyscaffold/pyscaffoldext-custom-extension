@@ -20,7 +20,7 @@ def test_entry_point_with_namespace(tmpfolder):
     entry_point = config_updater.get("options.entry_points",
                                      "pyscaffold.cli").value
     assert entry_point == "some_extension=pyscaffoldext." \
-                          "test.some_extension.some_extension:SomeExtension"
+                          "test.some_extension.extension:SomeExtension"
 
 
 def test_entry_point(tmpfolder):
@@ -36,4 +36,4 @@ def test_entry_point(tmpfolder):
     entry_point = config_updater.get("options.entry_points",
                                      "pyscaffold.cli").value
     assert entry_point == "some_extension=pyscaffoldext." \
-                          "some_extension.some_extension:SomeExtension"
+                          "some_extension.extension:SomeExtension"

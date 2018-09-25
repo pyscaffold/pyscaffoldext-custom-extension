@@ -9,6 +9,7 @@ from pyscaffold.extensions.no_skeleton import NoSkeleton
 from .templates import extension
 
 PYSCAFFOLDEXT_NS = "pyscaffoldext"
+EXTENSION_FILE_NAME = "extension"
 
 
 class CustomExtension(NoSkeleton):
@@ -42,7 +43,7 @@ class CustomExtension(NoSkeleton):
                    "{}={}.{}.{}:{}".format(opts["package"],
                                            opts["namespace"][-1],
                                            opts["package"],
-                                           opts["package"],
+                                           EXTENSION_FILE_NAME,
                                            get_class_name_from_opts(opts))
                    )
 
@@ -75,7 +76,7 @@ def get_class_name_from_opts(opts):
 def add_custom_extension_structure(struct, opts):
     custom_extension_file_content = extension(
             get_class_name_from_opts(opts))
-    filename = "{}.py".format(opts["package"])
+    filename = "{}.py".format(EXTENSION_FILE_NAME)
 
     path = [opts["project"], "src", opts["package"], filename]
     struct = helpers.ensure(struct, path,
