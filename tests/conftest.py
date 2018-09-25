@@ -9,11 +9,12 @@
 """
 from __future__ import print_function, absolute_import, division
 
-
-from shutil import rmtree
-import pytest
 import os
 import stat
+from shutil import rmtree
+
+import pytest
+
 
 def set_writable(func, path, exc_info):
     if not os.access(path, os.W_OK):
@@ -21,6 +22,7 @@ def set_writable(func, path, exc_info):
         func(path)
     else:
         raise RuntimeError
+
 
 @pytest.fixture
 def tmpfolder(tmpdir):

@@ -4,6 +4,7 @@ from pyscaffold.api import create_project
 from pyscaffold.cli import parse_args
 from pyscaffold.contrib.configupdater import ConfigUpdater
 
+
 def test_entry_point_with_namespace(tmpfolder):
     args = ["--namespace", "test", "--custom-extension", "some_extension"]
 
@@ -13,7 +14,8 @@ def test_entry_point_with_namespace(tmpfolder):
 
     config_updater = ConfigUpdater()
     config_updater.read_file(open("some_extension/setup.cfg"))
-    entry_point = config_updater.get("options.entry_points","pyscaffold.cli").value
+    entry_point = config_updater.get("options.entry_points",
+                                     "pyscaffold.cli").value
     assert entry_point == "some_extension=pyscaffoldext." \
                           "test.some_extension.some_extension:SomeExtension"
 
@@ -27,6 +29,7 @@ def test_entry_point(tmpfolder):
 
     config_updater = ConfigUpdater()
     config_updater.read_file(open("some_extension/setup.cfg"))
-    entry_point = config_updater.get("options.entry_points","pyscaffold.cli").value
+    entry_point = config_updater.get("options.entry_points",
+                                     "pyscaffold.cli").value
     assert entry_point == "some_extension=pyscaffoldext." \
                           "some_extension.some_extension:SomeExtension"
