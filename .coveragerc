@@ -1,7 +1,7 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-source = */pyscaffoldext_custom_extension/*
+source = */pyscaffoldext/custom_extension/*
 # omit = bad_file.py
 
 [report]
