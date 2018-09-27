@@ -1,10 +1,12 @@
-from pyscaffold.api import helpers
+from pyscaffold.api import Extension, helpers
 from pyscaffold.contrib.configupdater import ConfigUpdater
 from pyscaffold.extensions.namespace import (
     add_namespace,
     enforce_namespace_options
 )
 from pyscaffold.extensions.no_skeleton import NoSkeleton
+from pyscaffold.extensions.pre_commit import PreCommit
+from pyscaffold.extensions.tox import Tox
 
 from .templates import extension
 
@@ -12,16 +14,21 @@ PYSCAFFOLDEXT_NS = "pyscaffoldext"
 EXTENSION_FILE_NAME = "extension"
 
 
-class CustomExtension(NoSkeleton):
+class CustomExtension(Extension):
     """
-    Test
+    Configures a project to start creating extensions
+    without further changes
     """
 
     def activate(self, actions):
+        default_commands = [NoSkeleton, Tox, PreCommit]
+        for command in default_commands:
+            actions = command(command.__name__).activate(actions)
+
         actions = self.register(
                 actions,
                 add_custom_extension_structure,
-                after='define_structure')
+                after='remove_files')
         actions = self.register(
                 actions,
                 set_pyscaffoldext_namespace,
