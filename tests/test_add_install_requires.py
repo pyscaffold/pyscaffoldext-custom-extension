@@ -1,4 +1,3 @@
-import os
 from os.path import exists as path_exists
 
 from pyscaffold.api import create_project
@@ -11,7 +10,6 @@ def test_add_install_requires(tmpfolder):
 
     opts = parse_args(args)
     create_project(opts)
-    print(os.listdir("."))
     assert path_exists("some_extension/setup.cfg")
 
     config_updater = ConfigUpdater()
