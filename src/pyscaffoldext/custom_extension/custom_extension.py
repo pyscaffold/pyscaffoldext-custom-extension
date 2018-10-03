@@ -21,6 +21,7 @@ class CustomExtension(Extension):
     """
 
     def activate(self, actions):
+
         default_commands = [NoSkeleton, Tox, PreCommit]
         for command in default_commands:
             actions = command(command.__name__).activate(actions)
@@ -28,31 +29,35 @@ class CustomExtension(Extension):
         actions = self.register(
                 actions,
                 add_custom_extension_structure,
-                after='remove_files')
+                after='remove_files'
+        )
         actions = self.register(
                 actions,
                 set_pyscaffoldext_namespace,
                 after="add_custom_extension_structure"
-
         )
         actions = self.register(
             actions,
             add_install_requires,
             after="set_pyscaffoldext_namespace"
-
         )
         return self.register(
                 actions,
                 self.add_entry_point,
-                after='set_pyscaffoldext_namespace')
+                after='set_pyscaffoldext_namespace'
+        )
 
     def add_entry_point(self, struct, opts):
         entry_points_key = "options.entry_points"
+
         setup_cfg_content = struct[opts["project"]]["setup.cfg"][0]
+
         config = ConfigUpdater()
         config.read_string(setup_cfg_content)
+
         config.remove_section(entry_points_key)
         config.add_section(entry_points_key)
+
         config.set(entry_points_key, "pyscaffold.cli",
                    "{}={}.{}.{}:{}".format(opts["package"],
                                            opts["namespace"][-1],
@@ -67,19 +72,37 @@ class CustomExtension(Extension):
 
 
 def add_install_requires(struct, opts):
+    """
+    Add PyScaffold dependency to install_requires
+    :param struct:
+    :param opts:
+    :return:
+    """
     setupcfg = ConfigUpdater()
     setupcfg.read_string(struct[opts["project"]]["setup.cfg"])
     options = setupcfg['options']
 
     version_str = get_install_requires_version()
+
     options['package_dir'].add_after.option('install_requires', version_str)
     struct[opts["project"]]["setup.cfg"] = str(setupcfg)
+
     return struct, opts
 
 
 def set_pyscaffoldext_namespace(struct, opts):
+    """
+    Add the pyscaffoldext namespace as the outermost namespace of
+    the project to create. If the namespace parameter is
+    already specified, pyscaffoldext is prepended to the specified
+    namespace.
+    :param struct:
+    :param opts:
+    :return:
+    """
     namespace_parameter = opts.get("namespace", None)
     namespace_list = [PYSCAFFOLDEXT_NS]
+
     if isinstance(namespace_parameter, list):
         namespace_list.append(namespace_parameter[-1])
     elif isinstance(namespace_parameter, str):
@@ -87,6 +110,7 @@ def set_pyscaffoldext_namespace(struct, opts):
 
     opts["namespace"] = ".".join(namespace_list)
     struct, opts = enforce_namespace_options(struct, opts)
+
     if not namespace_parameter:
         struct, opts = add_namespace(struct, opts)
 
@@ -108,6 +132,13 @@ def get_class_name_from_opts(opts):
 
 
 def add_custom_extension_structure(struct, opts):
+    """
+    Adds an empty class that will serve as the skeleton
+    for the logic of the extension to create
+    :param struct:
+    :param opts:
+    :return:
+    """
     custom_extension_file_content = extension(
             get_class_name_from_opts(opts))
     filename = "{}.py".format(EXTENSION_FILE_NAME)
