@@ -1,3 +1,18 @@
+.. image:: https://travis-ci.org/pyscaffold/pyscaffoldext-custom-extension.svg?branch=master
+    :alt: Travis
+    :target: https://travis-ci.org/pyscaffold/pyscaffoldext-custom-extension
+.. image:: https://readthedocs.org/projects/pyscaffoldext-custom-extension/badge/?version=latest
+    :alt: ReadTheDocs
+    :target: https://pyscaffoldext-custom-extension.readthedocs.io/
+.. image:: https://img.shields.io/coveralls/github/pyscaffold/pyscaffold/master.svg
+    :alt: Coveralls
+    :target: https://coveralls.io/r/pyscaffold/pyscaffoldext-custom-extension
+.. image:: https://img.shields.io/pypi/v/pyscaffoldext-custom-extension.svg
+    :alt: PyPI-Server
+    :target: https://pypi.org/project/pyscaffoldext-custom-extension/
+
+|
+
 ==============================
 pyscaffoldext-custom-extension
 ==============================
