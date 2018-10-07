@@ -14,6 +14,10 @@ PYSCAFFOLDEXT_NS = "pyscaffoldext"
 EXTENSION_FILE_NAME = "extension"
 
 
+class InvalidProjectNameException(BaseException):
+    pass
+
+
 class CustomExtension(Extension):
     """
     Configures a project to start creating extensions
@@ -21,10 +25,15 @@ class CustomExtension(Extension):
     """
 
     def activate(self, actions):
-
         default_commands = [NoSkeleton, Tox, PreCommit]
         for command in default_commands:
             actions = command(command.__name__).activate(actions)
+
+        actions = self.register(
+                actions,
+                check_project_name,
+                before='define_structure'
+        )
 
         actions = self.register(
                 actions,
@@ -37,9 +46,9 @@ class CustomExtension(Extension):
                 after="add_custom_extension_structure"
         )
         actions = self.register(
-            actions,
-            add_install_requires,
-            after="set_pyscaffoldext_namespace"
+                actions,
+                add_install_requires,
+                after="set_pyscaffoldext_namespace"
         )
         return self.register(
                 actions,
@@ -118,7 +127,6 @@ def set_pyscaffoldext_namespace(struct, opts):
 
 
 def get_install_requires_version():
-
     require_str = "pyscaffold>={major}.{minor}a0,<{next_major}.0a0"
     major, minor, *rest = (parse_version(pyscaffold_version)
                            .base_version.split('.'))
@@ -147,5 +155,26 @@ def add_custom_extension_structure(struct, opts):
     struct = helpers.ensure(struct, path,
                             custom_extension_file_content,
                             helpers.NO_OVERWRITE)
+
+    return struct, opts
+
+
+def check_project_name(struct, opts):
+    """
+    Enforce the naming convention of PyScaffold extensions.
+    The project name must start with 'pyscaffoldext-' and
+    the package name shouldn't contain the redundant
+    'pyscaffoldext_' in the beginning of the name.
+    :param struct:
+    :param opts:
+    :return:
+    """
+    if not opts['project'].startswith('pyscaffoldext-'):
+        raise InvalidProjectNameException("An extension project name"
+                                          "should start with "
+                                          "'pyscaffoldext-")
+
+    if opts["package"].startswith('pyscaffoldext_'):
+        opts["package"] = opts["package"].replace("pyscaffoldext_", "")
 
     return struct, opts
