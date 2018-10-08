@@ -1,5 +1,6 @@
 from pyscaffold.api import Extension
 
+
 class ${extension_class_name}(Extension):
     """
     This class serves as the skeleton for your
