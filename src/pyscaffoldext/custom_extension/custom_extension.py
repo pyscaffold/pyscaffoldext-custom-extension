@@ -8,7 +8,7 @@ from pyscaffold.extensions.pre_commit import PreCommit
 from pyscaffold.extensions.tox import Tox
 from pyscaffold.update import ConfigUpdater, parse_version, pyscaffold_version
 
-from .templates import extension
+from .templates import extension, readme
 
 PYSCAFFOLDEXT_NS = "pyscaffoldext"
 EXTENSION_FILE_NAME = "extension"
@@ -47,11 +47,19 @@ class CustomExtension(Extension):
                 add_custom_extension_structure,
                 after='remove_files'
         )
+
+        actions = self.register(
+                actions,
+                add_readme,
+                after="add_custom_extension_structure"
+        )
+
         actions = self.register(
                 actions,
                 set_pyscaffoldext_namespace,
-                after="add_custom_extension_structure"
+                after="add_readme"
         )
+
         actions = self.register(
                 actions,
                 add_install_requires,
@@ -161,6 +169,25 @@ def add_custom_extension_structure(struct, opts):
     path = [opts["project"], "src", opts["package"], filename]
     struct = helpers.ensure(struct, path,
                             custom_extension_file_content,
+                            helpers.NO_OVERWRITE)
+
+    return struct, opts
+
+
+def add_readme(struct, opts):
+    """
+    Add README template
+    :param struct:
+    :param opts:
+    :return:
+    """
+    file_content = readme(
+            get_class_name_from_opts(opts))
+    filename = "README.rst"
+
+    path = [opts["project"], filename]
+    struct = helpers.ensure(struct, path,
+                            file_content,
                             helpers.NO_OVERWRITE)
 
     return struct, opts

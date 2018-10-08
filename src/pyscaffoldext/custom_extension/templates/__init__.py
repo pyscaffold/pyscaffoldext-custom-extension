@@ -15,3 +15,10 @@ def extension(class_name):
     return template.safe_substitute(
             {"extension_class_name": class_name}
     )
+
+
+def readme(class_name):
+    template = get_template("readme")
+    return template.safe_substitute(
+            {"extension_class_name": class_name}
+    )
