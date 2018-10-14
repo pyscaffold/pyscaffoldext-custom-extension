@@ -15,7 +15,14 @@ EXTENSION_FILE_NAME = "extension"
 
 
 class InvalidProjectNameException(BaseException):
-    pass
+    """Project name does not comply with convention of an extension"""
+
+    DEFAULT_MESSAGE = (
+        "An extension project name should start with "
+        "``pyscaffoldext-`` or use ``--force`` to overwrite.")
+
+    def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
+        super().__init__(message, *args, **kwargs)
 
 
 class CustomExtension(Extension):
@@ -169,7 +176,7 @@ def check_project_name(struct, opts):
     :param opts:
     :return:
     """
-    if not opts['project'].startswith('pyscaffoldext-'):
+    if not opts['project'].startswith('pyscaffoldext-') and not opts['force']:
         raise InvalidProjectNameException("An extension project name"
                                           "should start with "
                                           "'pyscaffoldext-")
