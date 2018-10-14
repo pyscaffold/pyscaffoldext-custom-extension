@@ -26,3 +26,13 @@ def test_naming_convention_package_name(tmpfolder):
     create_project(opts)
     assert not path_exists("pyscaffoldext-some_extension/src/pyscaffoldext/"
                            "some_extension")
+
+
+def test_naming_convention_force(tmpfolder):
+    args = ["--force", "--namespace", "test.second_level",
+            "--custom-extension", "some_extension"]
+
+    opts = parse_args(args)
+    create_project(opts)
+    assert not path_exists("pyscaffoldext-some_extension/src/pyscaffoldext/"
+                           "some_extension")
