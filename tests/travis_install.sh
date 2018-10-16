@@ -45,6 +45,11 @@ if [[ "$COVERAGE" == "true" ]]; then
 fi
 
 
+# for all
+pip install tox
+pip install -U pip setuptools
+
+
 travis-cleanup() {
     printf "Cleaning up environments ... "  # printf avoids new lines
     if [[ "$DISTRIB" == "conda" ]]; then

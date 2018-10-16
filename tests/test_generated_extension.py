@@ -20,7 +20,5 @@ def test_generated_extension(tmpfolder):
     assert os.path.exists("the_actual_project/setup.cfg")
 
     os.chdir("the_actual_project")
-    # formatting pyscaffold docs skeleton to pass flake8.
-    # call(["autopep8", "--max-line-length", "79", "-i", "-r", "docs"])
     flake8_project_res = call("flake8")
     assert flake8_project_res == 0
