@@ -14,7 +14,7 @@ PYSCAFFOLDEXT_NS = "pyscaffoldext"
 EXTENSION_FILE_NAME = "extension"
 
 
-class InvalidProjectNameException(BaseException):
+class InvalidProjectNameException(RuntimeError):
     """Project name does not comply with convention of an extension"""
 
     DEFAULT_MESSAGE = (
@@ -204,9 +204,7 @@ def check_project_name(struct, opts):
     :return:
     """
     if not opts['project'].startswith('pyscaffoldext-') and not opts['force']:
-        raise InvalidProjectNameException("An extension project name"
-                                          "should start with "
-                                          "'pyscaffoldext-")
+        raise InvalidProjectNameException
 
     if opts["package"].startswith('pyscaffoldext_'):
         opts["package"] = opts["package"].replace("pyscaffoldext_", "")
