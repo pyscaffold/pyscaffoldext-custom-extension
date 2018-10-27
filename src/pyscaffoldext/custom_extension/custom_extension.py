@@ -98,9 +98,13 @@ class CustomExtension(Extension):
 def add_install_requires(struct, opts):
     """
     Add PyScaffold dependency to install_requires
-    :param struct:
-    :param opts:
-    :return:
+
+    Args:
+        struct:
+        opts:
+
+    Returns:
+
     """
     setupcfg = ConfigUpdater()
     setupcfg.read_string(struct[opts["project"]]["setup.cfg"])
@@ -120,9 +124,13 @@ def set_pyscaffoldext_namespace(struct, opts):
     the project to create. If the namespace parameter is
     already specified, pyscaffoldext is prepended to the specified
     namespace.
-    :param struct:
-    :param opts:
-    :return:
+
+    Args:
+        struct:
+        opts:
+
+    Returns:
+
     """
     namespace_parameter = opts.get("namespace", None)
     namespace_list = [PYSCAFFOLDEXT_NS]
@@ -158,9 +166,13 @@ def add_custom_extension_structure(struct, opts):
     """
     Adds an empty class that will serve as the skeleton
     for the logic of the extension to create
-    :param struct:
-    :param opts:
-    :return:
+
+    Args:
+        struct:
+        opts:
+
+    Returns:
+
     """
     custom_extension_file_content = extension(
             get_class_name_from_opts(opts))
@@ -177,9 +189,13 @@ def add_custom_extension_structure(struct, opts):
 def add_readme(struct, opts):
     """
     Add README template
-    :param struct:
-    :param opts:
-    :return:
+
+    Args:
+        struct:
+        opts:
+
+    Returns:
+
     """
     file_content = readme(
             get_class_name_from_opts(opts))
@@ -199,9 +215,13 @@ def check_project_name(struct, opts):
     The project name must start with 'pyscaffoldext-' and
     the package name shouldn't contain the redundant
     'pyscaffoldext_' in the beginning of the name.
-    :param struct:
-    :param opts:
-    :return:
+
+    Args:
+        struct:
+        opts:
+
+    Returns:
+
     """
     if not opts['project'].startswith('pyscaffoldext-') and not opts['force']:
         raise InvalidProjectNameException
