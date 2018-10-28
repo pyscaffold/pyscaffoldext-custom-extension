@@ -26,12 +26,17 @@ class InvalidProjectNameException(RuntimeError):
 
 
 class CustomExtension(Extension):
-    """
-    Configures a project to start creating extensions
-    without further changes
-    """
+    """Configures a project to start creating extensions"""
 
     def activate(self, actions):
+        """Activate extension
+
+        Args:
+            actions (list): list of actions to perform
+
+        Returns:
+            list: updated list of actions
+        """
         default_commands = [NoSkeleton, Tox, PreCommit]
         for command in default_commands:
             actions = command(command.__name__).activate(actions)
@@ -72,6 +77,17 @@ class CustomExtension(Extension):
         )
 
     def add_entry_point(self, struct, opts):
+        """Adds the extension's entry_point to setup.cfg
+
+        Args:
+            struct (dict): project representation as (possibly) nested
+                :obj:`dict`.
+            opts (dict): given options, see :obj:`create_project` for
+                an extensive list.
+
+        Returns:
+            struct, opts: updated project representation and options
+        """
         entry_points_key = "options.entry_points"
 
         setup_cfg_content = struct[opts["project"]]["setup.cfg"][0]
@@ -87,7 +103,7 @@ class CustomExtension(Extension):
                                            opts["namespace"][-1],
                                            opts["package"],
                                            EXTENSION_FILE_NAME,
-                                           get_class_name_from_opts(opts))
+                                           get_class_name_from_pkg_name(opts))
                    )
 
         struct[opts["project"]]["setup.cfg"] = str(config)
@@ -96,15 +112,16 @@ class CustomExtension(Extension):
 
 
 def add_install_requires(struct, opts):
-    """
-    Add PyScaffold dependency to install_requires
+    """Add PyScaffold dependency to install_requires
 
     Args:
-        struct:
-        opts:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
 
     Returns:
-
+        struct, opts: updated project representation and options
     """
     setupcfg = ConfigUpdater()
     setupcfg.read_string(struct[opts["project"]]["setup.cfg"])
@@ -119,18 +136,21 @@ def add_install_requires(struct, opts):
 
 
 def set_pyscaffoldext_namespace(struct, opts):
-    """
+    """Sets the outer namespace to `pyscaffoldext`
+
     Add the pyscaffoldext namespace as the outermost namespace of
     the project to create. If the namespace parameter is
     already specified, pyscaffoldext is prepended to the specified
     namespace.
 
     Args:
-        struct:
-        opts:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
 
     Returns:
-
+        struct, opts: updated project representation and options
     """
     namespace_parameter = opts.get("namespace", None)
     namespace_list = [PYSCAFFOLDEXT_NS]
@@ -150,6 +170,11 @@ def set_pyscaffoldext_namespace(struct, opts):
 
 
 def get_install_requires_version():
+    """Retrieves pyscaffold version for install_requires
+
+    Returns:
+        str: install_requires definition
+    """
     require_str = "pyscaffold>={major}.{minor}a0,<{next_major}.0a0"
     major, minor, *rest = (parse_version(pyscaffold_version)
                            .base_version.split('.'))
@@ -157,25 +182,34 @@ def get_install_requires_version():
     return require_str.format(major=major, minor=minor, next_major=next_major)
 
 
-def get_class_name_from_opts(opts):
+def get_class_name_from_pkg_name(opts):
+    """Generate a class name from package name
+
+    Args:
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        str: class name of extension
+    """
     pkg_name = opts["package"]
     return "".join(map(str.capitalize, pkg_name.split("_")))
 
 
 def add_custom_extension_structure(struct, opts):
-    """
-    Adds an empty class that will serve as the skeleton
-    for the logic of the extension to create
+    """Adds basic module for custom extension
 
     Args:
-        struct:
-        opts:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
 
     Returns:
-
+        struct, opts: updated project representation and options
     """
     custom_extension_file_content = extension(
-            get_class_name_from_opts(opts))
+            get_class_name_from_pkg_name(opts))
     filename = "{}.py".format(EXTENSION_FILE_NAME)
 
     path = [opts["project"], "src", opts["package"], filename]
@@ -187,18 +221,19 @@ def add_custom_extension_structure(struct, opts):
 
 
 def add_readme(struct, opts):
-    """
-    Add README template
+    """Adds README template
 
     Args:
-        struct:
-        opts:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
 
     Returns:
-
+        struct, opts: updated project representation and options
     """
     file_content = readme(
-            get_class_name_from_opts(opts))
+            get_class_name_from_pkg_name(opts))
     filename = "README.rst"
 
     path = [opts["project"], filename]
@@ -210,18 +245,20 @@ def add_readme(struct, opts):
 
 
 def check_project_name(struct, opts):
-    """
-    Enforce the naming convention of PyScaffold extensions.
+    """Enforce the naming convention of PyScaffold extensions
+
     The project name must start with 'pyscaffoldext-' and
     the package name shouldn't contain the redundant
     'pyscaffoldext_' in the beginning of the name.
 
     Args:
-        struct:
-        opts:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
 
     Returns:
-
+        struct, opts: updated project representation and options
     """
     if not opts['project'].startswith('pyscaffoldext-') and not opts['force']:
         raise InvalidProjectNameException

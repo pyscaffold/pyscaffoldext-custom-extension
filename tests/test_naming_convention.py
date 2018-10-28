@@ -5,7 +5,7 @@ import pytest
 from pyscaffold.api import create_project
 from pyscaffold.cli import parse_args
 
-from pyscaffoldext.custom_extension.custom_extension import (
+from pyscaffoldext.custom_extension.extension import (
     InvalidProjectNameException
 )
 
