@@ -37,7 +37,8 @@ This will create a typical PyScaffold project template with some modifications:
 * the topmost namespace will be ``pyscaffoldext`` to have a unified namespace for PyScaffold extensions,
 * assures that the project is named ``pyscaffoldext-notebooks`` in ``setup.cfg``,
 * sets the correct ``setup_requires`` and ``install_requires`` as well as the ``options.entry_points`` parameters in ``setup.cfg``,
-* automatically activates the extensions ``--no-skeleton``, ``--pre-commit`` and ``--tox`` since we want clean-coded, high-quality extensions,
+* automatically activates the extensions ``--no-skeleton``, ``--pre-commit``, ``--travis`` and
+  ``--tox`` since we want clean-coded, high-quality extensions,
 * creates a ``extension.py`` module holding a class ``Notebooks`` which serves you as a template for your extension,
 * adds basic unit tests checking that the invocation of your extension works and that it complies with our `flake8`_ code guidelines (ToDo),
 * provides a modified ``README.rst`` indicating that this is a PyScaffold extensions and how to install it.

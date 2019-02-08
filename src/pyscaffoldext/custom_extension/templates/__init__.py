@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import string
 
 from pkg_resources import resource_string

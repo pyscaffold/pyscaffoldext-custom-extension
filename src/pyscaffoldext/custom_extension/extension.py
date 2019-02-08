@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Main logic to create custom extensions
+"""
 from pyscaffold.api import Extension, helpers
 from pyscaffold.extensions.namespace import (
     add_namespace,
@@ -6,6 +10,7 @@ from pyscaffold.extensions.namespace import (
 from pyscaffold.extensions.no_skeleton import NoSkeleton
 from pyscaffold.extensions.pre_commit import PreCommit
 from pyscaffold.extensions.tox import Tox
+from pyscaffold.extensions.travis import Travis
 from pyscaffold.update import ConfigUpdater, parse_version, pyscaffold_version
 
 from .templates import extension, readme, get_class_name_from_pkg_name
@@ -37,7 +42,7 @@ class CustomExtension(Extension):
         Returns:
             list: updated list of actions
         """
-        default_commands = [NoSkeleton, Tox, PreCommit]
+        default_commands = [NoSkeleton, Tox, PreCommit, Travis]
         for command in default_commands:
             actions = command(command.__name__).activate(actions)
 
