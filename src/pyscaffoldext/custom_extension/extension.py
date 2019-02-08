@@ -8,7 +8,7 @@ from pyscaffold.extensions.pre_commit import PreCommit
 from pyscaffold.extensions.tox import Tox
 from pyscaffold.update import ConfigUpdater, parse_version, pyscaffold_version
 
-from .templates import extension, readme
+from .templates import extension, readme, get_class_name_from_pkg_name
 
 PYSCAFFOLDEXT_NS = "pyscaffoldext"
 EXTENSION_FILE_NAME = "extension"
@@ -182,20 +182,6 @@ def get_install_requires_version():
     return require_str.format(major=major, minor=minor, next_major=next_major)
 
 
-def get_class_name_from_pkg_name(opts):
-    """Generate a class name from package name
-
-    Args:
-        opts (dict): given options, see :obj:`create_project` for
-            an extensive list.
-
-    Returns:
-        str: class name of extension
-    """
-    pkg_name = opts["package"]
-    return "".join(map(str.capitalize, pkg_name.split("_")))
-
-
 def add_custom_extension_structure(struct, opts):
     """Adds basic module for custom extension
 
@@ -208,10 +194,8 @@ def add_custom_extension_structure(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    custom_extension_file_content = extension(
-            get_class_name_from_pkg_name(opts))
+    custom_extension_file_content = extension(opts)
     filename = "{}.py".format(EXTENSION_FILE_NAME)
-
     path = [opts["project"], "src", opts["package"], filename]
     struct = helpers.ensure(struct, path,
                             custom_extension_file_content,
@@ -232,11 +216,8 @@ def add_readme(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    file_content = readme(
-            get_class_name_from_pkg_name(opts))
-    filename = "README.rst"
-
-    path = [opts["project"], filename]
+    file_content = readme(opts)
+    path = [opts["project"], "README.rst"]
     struct = helpers.ensure(struct, path,
                             file_content,
                             helpers.NO_OVERWRITE)
