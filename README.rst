@@ -17,7 +17,7 @@
 pyscaffoldext-custom-extension
 ==============================
 
-A PyScaffold's extension to create your own custom extensions.
+PyScaffold extension that let's you create your own custom extensions.
 
 Description
 ===========
@@ -40,7 +40,7 @@ This will create a typical PyScaffold project template with some modifications:
 * automatically activates the extensions ``--no-skeleton``, ``--pre-commit``, ``--travis`` and
   ``--tox`` since we want clean-coded, high-quality extensions,
 * creates a ``extension.py`` module holding a class ``Notebooks`` which serves you as a template for your extension,
-* adds basic unit tests checking that the invocation of your extension works and that it complies with our `flake8`_ code guidelines (ToDo),
+* adds basic unit tests checking that the invocation of your extension works and that it complies with our `flake8`_ code guidelines,
 * provides a modified ``README.rst`` indicating that this is a PyScaffold extensions and how to install it.
 
 Note

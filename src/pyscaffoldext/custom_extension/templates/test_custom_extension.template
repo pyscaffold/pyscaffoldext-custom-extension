@@ -7,7 +7,7 @@ from pyscaffold.utils import chdir
 
 from pyscaffoldext.${package}.extension import ${extension_class_name}
 
-FLAG = "--${package}"
+EXT_FLAG = "--${package}"
 
 
 def test_add_custom_extension(tmpfolder):
@@ -18,7 +18,7 @@ def test_add_custom_extension(tmpfolder):
 
 
 def test_add_custom_extension_with_namespace(tmpfolder):
-    args = ["--namespace", "ns", FLAG, "my_project"]
+    args = ["--namespace", "ns", EXT_FLAG, "my_project"]
 
     opts = parse_args(args)
     create_project(opts)
@@ -26,7 +26,7 @@ def test_add_custom_extension_with_namespace(tmpfolder):
 
 
 def test_add_custom_extension_with_namespace_2(tmpfolder):
-    args = ["--namespace", "ns1.ns2", FLAG, "my_project"]
+    args = ["--namespace", "ns1.ns2", EXT_FLAG, "my_project"]
 
     opts = parse_args(args)
     create_project(opts)
@@ -34,17 +34,17 @@ def test_add_custom_extension_with_namespace_2(tmpfolder):
 
 
 def test_generated_extension_flake8(tmpfolder, venv_run):
-    args = [FLAG, "my_project"]
+    args = [EXT_EXT_FLAG, "my_project"]
 
     opts = parse_args(args)
     create_project(opts)
 
     with chdir("my_project"):
-        assert 0 == venv_run("flake8")
-        venv_run("python", "setup.py", "install")
+        assert '' == venv_run("flake8")
+        venv_run("python setup.py install")
 
     putup(["--some-extension", "the_actual_project"])
     assert path_exists("the_actual_project/setup.cfg")
 
     with chdir("the_actual_project"):
-        assert 0 == venv_run("flake8")
+        assert '' == venv_run("flake8")

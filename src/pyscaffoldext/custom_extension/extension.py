@@ -175,11 +175,11 @@ def add_pytest_requirements(struct, opts):
     setupcfg = ConfigUpdater()
     setupcfg.read_string(struct[opts["project"]]["setup.cfg"])
     extras_require = setupcfg['options.extras_require']
-    extras_require['testing'] = ['flake8',
-                                 'pytest',
-                                 'pytest-cov',
-                                 'pytest-virtualenv',
-                                 'pytest-xdist']
+    extras_require['testing'].set_values(['flake8',
+                                          'pytest',
+                                          'pytest-cov',
+                                          'pytest-virtualenv',
+                                          'pytest-xdist'])
     struct[opts["project"]]["setup.cfg"] = str(setupcfg)
 
     return struct, opts
