@@ -58,3 +58,16 @@ def readme(opts):
     """
     template = get_template("readme")
     return template.safe_substitute(opts)
+
+
+def test_custom_extension(opts):
+    """Template of test_custom_extension.py
+
+    Args:
+        opts: mapping parameters as dictionary
+
+    Returns:
+        str: file content as string
+    """
+    template = get_template("test_custom_extension")
+    return template.safe_substitute(opts)

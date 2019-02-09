@@ -13,7 +13,8 @@ from pyscaffold.extensions.tox import Tox
 from pyscaffold.extensions.travis import Travis
 from pyscaffold.update import ConfigUpdater, parse_version, pyscaffold_version
 
-from .templates import extension, readme, get_class_name_from_pkg_name
+from . import  templates
+from .templates import get_class_name_from_pkg_name
 
 PYSCAFFOLDEXT_NS = "pyscaffoldext"
 EXTENSION_FILE_NAME = "extension"
@@ -66,8 +67,14 @@ class CustomExtension(Extension):
 
         actions = self.register(
                 actions,
-                set_pyscaffoldext_namespace,
+                add_test_custom_extension,
                 after="add_readme"
+        )
+
+        actions = self.register(
+                actions,
+                set_pyscaffoldext_namespace,
+                after="add_test_custom_extension"
         )
 
         actions = self.register(
@@ -199,7 +206,7 @@ def add_custom_extension_structure(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    custom_extension_file_content = extension(opts)
+    custom_extension_file_content = templates.extension(opts)
     filename = "{}.py".format(EXTENSION_FILE_NAME)
     path = [opts["project"], "src", opts["package"], filename]
     struct = helpers.ensure(struct, path,
@@ -221,8 +228,29 @@ def add_readme(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    file_content = readme(opts)
+    file_content = templates.readme(opts)
     path = [opts["project"], "README.rst"]
+    struct = helpers.ensure(struct, path,
+                            file_content,
+                            helpers.NO_OVERWRITE)
+
+    return struct, opts
+
+
+def add_test_custom_extension(struct, opts):
+    """Adds tests/test_custom_extension.py
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        struct, opts: updated project representation and options
+    """
+    file_content = templates.test_custom_extension(opts)
+    path = [opts["project"], "tests", "test_custom_extension.py"]
     struct = helpers.ensure(struct, path,
                             file_content,
                             helpers.NO_OVERWRITE)
