@@ -11,11 +11,11 @@ def test_generated_extension(tmpfolder, venv_run):
     opts = parse_args(args)
     create_project(opts)
     with chdir("pyscaffoldext-some_extension"):
-        assert 0 == venv_run("flake8")
+        assert '' == venv_run("flake8")
         venv_run(["python", "setup.py", "install"])
 
     putup(["--some-extension", "the_actual_project"])
     assert path_exists("the_actual_project/setup.cfg")
 
     with chdir("the_actual_project"):
-        assert 0 == venv_run("flake8")
+        assert '' == venv_run("flake8")

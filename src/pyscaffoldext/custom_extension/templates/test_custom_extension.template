@@ -9,6 +9,7 @@ from pyscaffoldext.${package}.extension import ${extension_class_name}
 
 FLAG = "--${package}"
 
+
 def test_add_custom_extension(tmpfolder):
     opts = {"package": "my_extension", "project": "my_project",
             "extensions": [${extension_class_name}("custom_ext")]}
@@ -29,21 +30,21 @@ def test_add_custom_extension_with_namespace_2(tmpfolder):
 
     opts = parse_args(args)
     create_project(opts)
-    assert path_exists(
-            "my_project/src/ns1/ns2/my_project/extension.py")
+    assert path_exists("my_project/src/ns1/ns2/my_project/extension.py")
 
-def test_generated_extension_flake8(tmpfolder):
+
+def test_generated_extension_flake8(tmpfolder, venv_run):
     args = [FLAG, "my_project"]
 
     opts = parse_args(args)
     create_project(opts)
 
     with chdir("my_project"):
-        assert 0 == call("flake8")
-        call(["python", "setup.py", "install"])
+        assert 0 == venv_run("flake8")
+        venv_run("python", "setup.py", "install")
 
     putup(["--some-extension", "the_actual_project"])
     assert path_exists("the_actual_project/setup.cfg")
 
     with chdir("the_actual_project"):
-        assert 0 == call("flake8")
+        assert 0 == venv_run("flake8")

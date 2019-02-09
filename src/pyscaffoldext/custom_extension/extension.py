@@ -13,7 +13,7 @@ from pyscaffold.extensions.tox import Tox
 from pyscaffold.extensions.travis import Travis
 from pyscaffold.update import ConfigUpdater, parse_version, pyscaffold_version
 
-from . import  templates
+from . import templates
 from .templates import get_class_name_from_pkg_name
 
 PYSCAFFOLDEXT_NS = "pyscaffoldext"
@@ -67,8 +67,14 @@ class CustomExtension(Extension):
 
         actions = self.register(
                 actions,
-                add_test_custom_extension,
+                add_conftest,
                 after="add_readme"
+        )
+
+        actions = self.register(
+                actions,
+                add_test_custom_extension,
+                after="add_conftest"
         )
 
         actions = self.register(
@@ -82,6 +88,13 @@ class CustomExtension(Extension):
                 add_install_requires,
                 after="set_pyscaffoldext_namespace"
         )
+
+        actions = self.register(
+                actions,
+                add_pytest_requirements,
+                after="set_pyscaffoldext_namespace"
+        )
+
         return self.register(
                 actions,
                 self.add_entry_point,
@@ -142,6 +155,31 @@ def add_install_requires(struct, opts):
     version_str = get_install_requires_version()
 
     options['package_dir'].add_after.option('install_requires', version_str)
+    struct[opts["project"]]["setup.cfg"] = str(setupcfg)
+
+    return struct, opts
+
+
+def add_pytest_requirements(struct, opts):
+    """Add [options.extras_require] testing requirements for py.test
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        struct, opts: updated project representation and options
+    """
+    setupcfg = ConfigUpdater()
+    setupcfg.read_string(struct[opts["project"]]["setup.cfg"])
+    extras_require = setupcfg['options.extras_require']
+    extras_require['testing'] = ['flake8',
+                                 'pytest',
+                                 'pytest-cov',
+                                 'pytest-virtualenv',
+                                 'pytest-xdist']
     struct[opts["project"]]["setup.cfg"] = str(setupcfg)
 
     return struct, opts
@@ -230,6 +268,27 @@ def add_readme(struct, opts):
     """
     file_content = templates.readme(opts)
     path = [opts["project"], "README.rst"]
+    struct = helpers.ensure(struct, path,
+                            file_content,
+                            helpers.NO_OVERWRITE)
+
+    return struct, opts
+
+
+def add_conftest(struct, opts):
+    """Adds improved tests/conftest.py
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        struct, opts: updated project representation and options
+    """
+    file_content = templates.conftest(opts)
+    path = [opts["project"], "tests", "conftest.py"]
     struct = helpers.ensure(struct, path,
                             file_content,
                             helpers.NO_OVERWRITE)
