@@ -2,7 +2,7 @@
 from os.path import exists as path_exists
 
 from pyscaffold.api import create_project
-from pyscaffold.cli import parse_args, main as putup
+from pyscaffold.cli import parse_args
 from pyscaffold.utils import chdir
 
 from pyscaffoldext.${package}.extension import ${extension_class_name}
@@ -34,7 +34,7 @@ def test_add_custom_extension_with_namespace_2(tmpfolder):
 
 
 def test_generated_extension_flake8(tmpfolder, venv_run):
-    args = [EXT_EXT_FLAG, "my_project"]
+    args = [EXT_FLAG, "my_project"]
 
     opts = parse_args(args)
     create_project(opts)
@@ -43,7 +43,7 @@ def test_generated_extension_flake8(tmpfolder, venv_run):
         assert '' == venv_run("flake8")
         venv_run("python setup.py install")
 
-    putup(["--some-extension", "the_actual_project"])
+    venv_run("putup {ext_flag} the_actual_project".format(EXT_FLAG))
     assert path_exists("the_actual_project/setup.cfg")
 
     with chdir("the_actual_project"):

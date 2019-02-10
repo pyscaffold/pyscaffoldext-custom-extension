@@ -1,7 +1,7 @@
 from os.path import exists as path_exists
 
 from pyscaffold.api import create_project
-from pyscaffold.cli import parse_args, main as putup
+from pyscaffold.cli import parse_args
 from pyscaffold.utils import chdir
 
 
@@ -14,7 +14,7 @@ def test_generated_extension(tmpfolder, venv_run):
         assert '' == venv_run("flake8")
         venv_run("python setup.py install")
 
-    putup(["--some-extension", "the_actual_project"])
+    venv_run("putup --some-extension the_actual_project")
     assert path_exists("the_actual_project/setup.cfg")
 
     with chdir("the_actual_project"):
