@@ -2,40 +2,31 @@
 pyscaffoldext-custom-extension
 ==============================
 
-This is the documentation of **pyscaffoldext-custom-extension**.
+This extension serves as a support for the users interested in developing their own extension for PyScaffold. It configures your project so that you can start writing your extension logic and tests right away, taking care of all the wiring required to conform to PyScaffold's needs.
 
-.. note::
+Let's say you want to create an extension named ``notebooks`` that creates a notebooks folder with some template `Jupyter notebook`_. After having installed this extension with::
 
-    This is the main page of your project's `Sphinx <http://sphinx-doc.org/>`_
-    documentation. It is formatted in `reStructuredText
-    <http://sphinx-doc.org/rest.html>`__. Add additional pages by creating
-    rst-files in ``docs`` and adding them to the `toctree
-    <http://sphinx-doc.org/markup/toctree.html>`_ below. Use then
-    `references <http://sphinx-doc.org/markup/inline.html>`__ in order to link
-    them from this page, e.g. :ref:`authors <authors>` and :ref:`changes`.
+ pip install pyscaffoldext-custom-extension
 
-    It is also possible to refer to the documentation of other Python packages
-    with the `Python domain syntax
-    <http://sphinx-doc.org/domains.html#the-python-domain>`__. By default you
-    can reference the documentation of `Sphinx <http://sphinx.pocoo.org>`__,
-    `Python <http://docs.python.org/>`__, `NumPy
-    <http://docs.scipy.org/doc/numpy>`__, `SciPy
-    <http://docs.scipy.org/doc/scipy/reference/>`__, `matplotlib
-    <http://matplotlib.sourceforge.net>`__, `Pandas
-    <http://pandas.pydata.org/pandas-docs/stable>`__, `Scikit-Learn
-    <http://scikit-learn.org/stable>`__. You can add more by
-    extending the ``intersphinx_mapping`` in your Sphinx's ``conf.py``.
+you will be able to just use it with::
 
-    The pretty useful extension `autodoc
-    <http://www.sphinx-doc.org/en/stable/ext/autodoc.html>`__ is activated by
-    default and lets you include documentation from docstrings. Docstrings can
-    be written in `Google
-    <http://google.github.io/styleguide/pyguide.html#Comments>`__
-    (recommended!), `NumPy
-    <https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt>`__
-    and `classical
-    <http://www.sphinx-doc.org/en/stable/domains.html#info-field-lists>`__
-    style.
+ putup --custom-extension notebooks
+
+This will create a typical PyScaffold project template with some modifications:
+
+* the topmost namespace will be ``pyscaffoldext`` to have a unified namespace for PyScaffold extensions,
+* assures that the project is named ``pyscaffoldext-notebooks`` in ``setup.cfg``,
+* sets the correct ``setup_requires`` and ``install_requires`` as well as the ``options.entry_points`` parameters in ``setup.cfg``,
+* automatically activates the extensions ``--no-skeleton``, ``--pre-commit``, ``--travis`` and
+  ``--tox`` since we want clean-coded, high-quality extensions,
+* creates a ``extension.py`` module holding a class ``Notebooks`` which serves you as a template for your extension,
+* adds basic unit tests checking that the invocation of your extension works and that it complies with our `flake8`_ code guidelines,
+* provides a modified ``README.rst`` indicating that this is a PyScaffold extensions and how to install it.
+
+Note
+====
+
+For more information about PyScaffold and its extension mechanism, check out http://pyscaffold.org/.
 
 
 Contents
@@ -56,3 +47,7 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+.. _Jupyter notebook: https://jupyter-notebook.readthedocs.io/
+.. _flake8: http://flake8.pycqa.org/
