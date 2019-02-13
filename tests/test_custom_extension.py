@@ -3,7 +3,8 @@ from os.path import exists as path_exists
 from pyscaffold.api import create_project
 from pyscaffold.cli import parse_args
 
-from pyscaffoldext.custom_extension.extension import CustomExtension, NamespaceError
+from pyscaffoldext.custom_extension.extension import (CustomExtension,
+                                                      NamespaceError)
 
 import pytest
 
