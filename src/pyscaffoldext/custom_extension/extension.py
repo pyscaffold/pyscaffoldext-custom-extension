@@ -3,10 +3,6 @@
 Main logic to create custom extensions
 """
 from pyscaffold.api import Extension, helpers
-from pyscaffold.extensions.namespace import (
-    add_namespace,
-    enforce_namespace_options
-)
 from pyscaffold.extensions.no_skeleton import NoSkeleton
 from pyscaffold.extensions.pre_commit import PreCommit
 from pyscaffold.extensions.tox import Tox
@@ -32,6 +28,17 @@ class InvalidProjectNameException(RuntimeError):
         super().__init__(message, *args, **kwargs)
 
 
+class NamespaceError(RuntimeError):
+    """No additional namespace is allowed"""
+
+    DEFAULT_MESSAGE = (
+        "It's not possible to define a custom namespace "
+        "when using ``--custom-extension``.")
+
+    def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
+        super().__init__(message, *args, **kwargs)
+
+
 class CustomExtension(Extension):
     """Configures a project to start creating extensions"""
 
@@ -51,6 +58,12 @@ class CustomExtension(Extension):
         namespace = Namespace(Namespace.__name__)
         namespace.args = [PYSCAFFOLDEXT_NS]
         actions = namespace.activate(actions)
+
+        actions = self.register(
+                actions,
+                assert_no_namespace,
+                after='get_default_options'
+        )
 
         actions = self.register(
                 actions,
@@ -103,13 +116,29 @@ def modify_setupcfg(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    setupcfg_path = [opts["project"], "setup.cfg"]
-    # add important namespace settings
     opts["namespace"] = [PYSCAFFOLDEXT_NS]
+    setupcfg_path = [opts["project"], "setup.cfg"]
     struct = helpers.modify(struct, setupcfg_path, add_install_requires)
     struct = helpers.modify(struct, setupcfg_path, add_pytest_requirements)
     struct = helpers.modify(struct, setupcfg_path,
                             lambda x: add_entry_point(x, opts))
+    return struct, opts
+
+
+def assert_no_namespace(struct, opts):
+    """Assert that no namespace was set by the user
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        struct, opts: updated project representation and options
+    """
+    if opts.get("namespace", None):
+        raise NamespaceError()
     return struct, opts
 
 

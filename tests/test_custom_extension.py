@@ -3,7 +3,9 @@ from os.path import exists as path_exists
 from pyscaffold.api import create_project
 from pyscaffold.cli import parse_args
 
-from pyscaffoldext.custom_extension.extension import CustomExtension
+from pyscaffoldext.custom_extension.extension import CustomExtension, NamespaceError
+
+import pytest
 
 
 def test_add_custom_extension(tmpfolder):
@@ -20,6 +22,5 @@ def test_add_custom_extension_with_namespace(tmpfolder):
             "pyscaffoldext-some_extension"]
 
     opts = parse_args(args)
-    create_project(opts)
-    assert path_exists("pyscaffoldext-some_extension/src/pyscaffoldext"
-                       "/some_extension/extension.py")
+    with pytest.raises(NamespaceError):
+        create_project(opts)
