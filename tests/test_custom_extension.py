@@ -15,32 +15,11 @@ def test_add_custom_extension(tmpfolder):
 
 
 def test_add_custom_extension_with_namespace(tmpfolder):
+    # we expect the second namespace to be just ignored
     args = ["--namespace", "test", "--custom-extension",
             "pyscaffoldext-some_extension"]
 
     opts = parse_args(args)
     create_project(opts)
-    assert path_exists("pyscaffoldext-some_extension/src/pyscaffoldext/"
-                       "test/some_extension/extension.py")
-
-
-def test_add_custom_extension_with_namespace_2(tmpfolder):
-    args = ["--namespace", "test.second_level",
-            "--custom-extension", "pyscaffoldext-some_extension"]
-
-    opts = parse_args(args)
-    create_project(opts)
-    assert path_exists(
-            "pyscaffoldext-some_extension/src/pyscaffoldext/test/second_level/"
-            "some_extension/extension.py")
-
-
-def test_add_custom_extension_with_namespace_3(tmpfolder):
-    args = ["--namespace", "test.second_level.third_level",
-            "--custom-extension", "pyscaffoldext-some_extension"]
-
-    opts = parse_args(args)
-    create_project(opts)
-    assert path_exists(
-            "pyscaffoldext-some_extension/src/pyscaffoldext/test/second_level/"
-            "third_level/some_extension/extension.py")
+    assert path_exists("pyscaffoldext-some_extension/src/pyscaffoldext"
+                       "/some_extension/extension.py")

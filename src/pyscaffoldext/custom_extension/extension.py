@@ -11,6 +11,7 @@ from pyscaffold.extensions.no_skeleton import NoSkeleton
 from pyscaffold.extensions.pre_commit import PreCommit
 from pyscaffold.extensions.tox import Tox
 from pyscaffold.extensions.travis import Travis
+from pyscaffold.extensions.namespace import Namespace
 from pyscaffold.update import ConfigUpdater, parse_version, pyscaffold_version
 
 from . import templates
@@ -46,6 +47,10 @@ class CustomExtension(Extension):
         default_commands = [NoSkeleton, Tox, PreCommit, Travis]
         for command in default_commands:
             actions = command(command.__name__).activate(actions)
+        # set the namesapce accordingly
+        namespace = Namespace(Namespace.__name__)
+        namespace.args = [PYSCAFFOLDEXT_NS]
+        actions = namespace.activate(actions)
 
         actions = self.register(
                 actions,
@@ -79,65 +84,15 @@ class CustomExtension(Extension):
 
         actions = self.register(
                 actions,
-                set_pyscaffoldext_namespace,
+                modify_setupcfg,
                 after="add_test_custom_extension"
         )
 
-        actions = self.register(
-                actions,
-                add_install_requires,
-                after="set_pyscaffoldext_namespace"
-        )
-
-        actions = self.register(
-                actions,
-                add_pytest_requirements,
-                after="set_pyscaffoldext_namespace"
-        )
-
-        return self.register(
-                actions,
-                self.add_entry_point,
-                after='set_pyscaffoldext_namespace'
-        )
-
-    def add_entry_point(self, struct, opts):
-        """Adds the extension's entry_point to setup.cfg
-
-        Args:
-            struct (dict): project representation as (possibly) nested
-                :obj:`dict`.
-            opts (dict): given options, see :obj:`create_project` for
-                an extensive list.
-
-        Returns:
-            struct, opts: updated project representation and options
-        """
-        entry_points_key = "options.entry_points"
-
-        setup_cfg_content = struct[opts["project"]]["setup.cfg"][0]
-
-        config = ConfigUpdater()
-        config.read_string(setup_cfg_content)
-
-        config.remove_section(entry_points_key)
-        config.add_section(entry_points_key)
-
-        config.set(entry_points_key, "pyscaffold.cli",
-                   "{}={}.{}.{}:{}".format(opts["package"],
-                                           opts["namespace"][-1],
-                                           opts["package"],
-                                           EXTENSION_FILE_NAME,
-                                           get_class_name_from_pkg_name(opts))
-                   )
-
-        struct[opts["project"]]["setup.cfg"] = str(config)
-
-        return struct, opts
+        return actions
 
 
-def add_install_requires(struct, opts):
-    """Add PyScaffold dependency to install_requires
+def modify_setupcfg(struct, opts):
+    """Modify setup.cfg to add install_requires and pytest settings
 
     Args:
         struct (dict): project representation as (possibly) nested
@@ -148,75 +103,88 @@ def add_install_requires(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    setupcfg = ConfigUpdater()
-    setupcfg.read_string(struct[opts["project"]]["setup.cfg"])
-    options = setupcfg['options']
-
-    version_str = get_install_requires_version()
-
-    options['package_dir'].add_after.option('install_requires', version_str)
-    struct[opts["project"]]["setup.cfg"] = str(setupcfg)
-
+    setupcfg_path = [opts["project"], "setup.cfg"]
+    # add important namespace settings
+    opts["namespace"] = [PYSCAFFOLDEXT_NS]
+    struct = helpers.modify(struct, setupcfg_path, add_install_requires)
+    struct = helpers.modify(struct, setupcfg_path, add_pytest_requirements)
+    struct = helpers.modify(struct, setupcfg_path,
+                            lambda x: add_entry_point(x, opts))
     return struct, opts
 
 
-def add_pytest_requirements(struct, opts):
-    """Add [options.extras_require] testing requirements for py.test
+def add_entry_point(setupcfg_str, opts):
+    """Adds the extension's entry_point to setup.cfg
 
     Args:
-        struct (dict): project representation as (possibly) nested
-            :obj:`dict`.
+        setupcfg_str (str): content of setup.cfg as string
         opts (dict): given options, see :obj:`create_project` for
             an extensive list.
 
     Returns:
-        struct, opts: updated project representation and options
+       str: setup.cfg with install_requires
+    """
+    entry_points_key = "options.entry_points"
+
+    setupcfg = ConfigUpdater()
+    setupcfg.read_string(setupcfg_str)
+
+    if not setupcfg.has_section(entry_points_key):
+        setupcfg["options"].add_after.section(entry_points_key)
+
+    entry_points = setupcfg[entry_points_key]
+    entry_points.insert_at(0).option("pyscaffold.cli")
+    entry_points["pyscaffold.cli"].set_values(
+        ["{} = {}.{}.{}:{}".format(
+            opts["package"],
+            opts["namespace"][-1],
+            opts["package"],
+            EXTENSION_FILE_NAME,
+            get_class_name_from_pkg_name(opts))]
+    )
+
+    return str(setupcfg)
+
+
+def add_install_requires(setupcfg_str):
+    """Add PyScaffold dependency to install_requires
+
+    Args:
+        setupcfg_str (str): content of setup.cfg as string
+
+    Returns:
+       str: setup.cfg with install_requires
     """
     setupcfg = ConfigUpdater()
-    setupcfg.read_string(struct[opts["project"]]["setup.cfg"])
+    setupcfg.read_string(setupcfg_str)
+    options = setupcfg['options']
+    version_str = get_install_requires_version()
+    if 'install_requires' in options:
+        options['install_requires'].value = version_str
+    else:
+        options['package_dir'].add_after.option('install_requires',
+                                                version_str)
+    return str(setupcfg)
+
+
+def add_pytest_requirements(setupcfg_str):
+    """Add [options.extras_require] testing requirements for py.test
+
+    Args:
+        setupcfg_str (str): content of setup.cfg as string
+
+    Returns:
+       str: setup.cfg with install_requires
+    """
+    setupcfg = ConfigUpdater()
+    setupcfg.read_string(setupcfg_str)
     extras_require = setupcfg['options.extras_require']
     extras_require['testing'].set_values(['flake8',
                                           'pytest',
                                           'pytest-cov',
                                           'pytest-virtualenv',
                                           'pytest-xdist'])
-    struct[opts["project"]]["setup.cfg"] = str(setupcfg)
-
-    return struct, opts
-
-
-def set_pyscaffoldext_namespace(struct, opts):
-    """Sets the outer namespace to `pyscaffoldext`
-
-    Add the pyscaffoldext namespace as the outermost namespace of
-    the project to create. If the namespace parameter is
-    already specified, pyscaffoldext is prepended to the specified
-    namespace.
-
-    Args:
-        struct (dict): project representation as (possibly) nested
-            :obj:`dict`.
-        opts (dict): given options, see :obj:`create_project` for
-            an extensive list.
-
-    Returns:
-        struct, opts: updated project representation and options
-    """
-    namespace_parameter = opts.get("namespace", None)
-    namespace_list = [PYSCAFFOLDEXT_NS]
-
-    if isinstance(namespace_parameter, list):
-        namespace_list.append(namespace_parameter[-1])
-    elif isinstance(namespace_parameter, str):
-        namespace_list.append(namespace_parameter)
-
-    opts["namespace"] = ".".join(namespace_list)
-    struct, opts = enforce_namespace_options(struct, opts)
-
-    if not namespace_parameter:
-        struct, opts = add_namespace(struct, opts)
-
-    return struct, opts
+    return str(setupcfg)
 
 
 def get_install_requires_version():

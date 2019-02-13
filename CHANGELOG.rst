@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 0.4
+===========
+
+- Always set namespace to ``pyscaffoldext``
+
 Version 0.3
 ===========
 
