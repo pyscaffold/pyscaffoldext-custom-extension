@@ -2,12 +2,13 @@
 """
 Main logic to create custom extensions
 """
+import argparse
 from pyscaffold.api import Extension, helpers
 from pyscaffold.extensions.no_skeleton import NoSkeleton
+from pyscaffold.extensions.namespace import Namespace
 from pyscaffold.extensions.pre_commit import PreCommit
 from pyscaffold.extensions.tox import Tox
 from pyscaffold.extensions.travis import Travis
-from pyscaffold.extensions.namespace import Namespace
 from pyscaffold.update import ConfigUpdater, parse_version, pyscaffold_version
 
 from . import templates
@@ -39,8 +40,43 @@ class NamespaceError(RuntimeError):
         super().__init__(message, *args, **kwargs)
 
 
+class IncludeExtensions(argparse.Action):
+    """Activate other extensions
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        extensions = [
+            NoSkeleton(),
+            Namespace(),
+            PreCommit(),
+            Tox(),
+            Travis(),
+            CustomExtension()
+        ]
+        namespace.extensions.extend(extensions)
+
+
 class CustomExtension(Extension):
     """Configures a project to start creating extensions"""
+    def augment_cli(self, parser):
+        """Augments the command-line interface parser
+
+        A command line argument ``--FLAG`` where FLAG=``self.name`` is added
+        which appends ``self.activate`` to the list of extensions. As help
+        text the docstring of the extension class is used.
+        In most cases this method does not need to be overwritten.
+
+        Args:
+            parser: current parser object
+        """
+        help = self.__doc__[0].lower() + self.__doc__[1:]
+
+        parser.add_argument(
+            self.flag,
+            help=help,
+            nargs=0,
+            dest="extensions",
+            action=IncludeExtensions)
+        return self
 
     def activate(self, actions):
         """Activate extension
@@ -51,30 +87,22 @@ class CustomExtension(Extension):
         Returns:
             list: updated list of actions
         """
-        default_commands = [NoSkeleton, Tox, PreCommit, Travis]
-        for command in default_commands:
-            actions = command(command.__name__).activate(actions)
-        # set the namesapce accordingly
-        namespace = Namespace(Namespace.__name__)
-        namespace.args = [PYSCAFFOLDEXT_NS]
-        actions = namespace.activate(actions)
-
         actions = self.register(
                 actions,
-                assert_no_namespace,
+                add_extension_namespace,
                 after='get_default_options'
         )
 
         actions = self.register(
                 actions,
                 check_project_name,
-                before='define_structure'
+                after='get_default_options'
         )
 
         actions = self.register(
                 actions,
                 add_custom_extension_structure,
-                after='remove_files'
+                before='remove_files'
         )
 
         actions = self.register(
@@ -125,7 +153,7 @@ def modify_setupcfg(struct, opts):
     return struct, opts
 
 
-def assert_no_namespace(struct, opts):
+def add_extension_namespace(struct, opts):
     """Assert that no namespace was set by the user
 
     Args:
@@ -137,8 +165,9 @@ def assert_no_namespace(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    if opts.get("namespace", None):
+    if opts.get("namespace", None) and not opts["update"]:
         raise NamespaceError()
+    opts["namespace"] = PYSCAFFOLDEXT_NS
     return struct, opts
 
 
