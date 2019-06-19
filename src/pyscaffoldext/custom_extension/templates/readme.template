@@ -7,7 +7,7 @@ ${description}
 Usage
 =====
 
-Just install this package with ``pip install ${project}`` and note that ``putup -h`` shows a new option ``--${project}``. Use this flag to...
+Just install this package with ``pip install ${project}`` and note that ``putup -h`` shows a new option ``--${project}``. Use this flag to ...
 
 
 Note
