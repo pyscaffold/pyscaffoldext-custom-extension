@@ -359,10 +359,10 @@ def check_project_name(struct, opts):
     Returns:
         struct, opts: updated project representation and options
     """
-    if not opts['project'].startswith('pyscaffoldext-') and not opts['force']:
+    if not opts["project"].startswith("pyscaffoldext-") and not opts["force"]:
         raise InvalidProjectNameException
 
-    if opts["package"].startswith('pyscaffoldext_'):
+    if opts["package"].startswith("pyscaffoldext_"):
         opts["package"] = opts["package"].replace("pyscaffoldext_", "")
 
     return struct, opts

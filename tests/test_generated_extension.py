@@ -1,7 +1,7 @@
 from os.path import exists as path_exists
 
 from pyscaffold.api import create_project
-from pyscaffold.cli import parse_args
+from pyscaffold.cli import parse_args, process_opts
 from pyscaffold.utils import chdir
 
 
@@ -9,6 +9,7 @@ def test_generated_extension(tmpfolder, venv_run):
     args = ["--custom-extension", "pyscaffoldext-some_extension"]
 
     opts = parse_args(args)
+    opts = process_opts(opts)
     create_project(opts)
     with chdir("pyscaffoldext-some_extension"):
         assert '' == venv_run("flake8")
