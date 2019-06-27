@@ -45,12 +45,12 @@ class IncludeExtensions(argparse.Action):
     """
     def __call__(self, parser, namespace, values, option_string=None):
         extensions = [
-            NoSkeleton(),
-            Namespace(),
-            PreCommit(),
-            Tox(),
-            Travis(),
-            CustomExtension()
+            NoSkeleton('no_skeleton'),
+            Namespace('namespace'),
+            PreCommit('pre_commit'),
+            Tox('tox'),
+            Travis('travis'),
+            CustomExtension('custom_extension')
         ]
         namespace.extensions.extend(extensions)
 
