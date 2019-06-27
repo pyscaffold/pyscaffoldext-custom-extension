@@ -2,10 +2,13 @@
 Changelog
 =========
 
+
 Version 0.4
 ===========
 
 - Always set namespace to ``pyscaffoldext``
+- Changes required for PyScaffold 3.2
+- Several fixes
 
 Version 0.3
 ===========
