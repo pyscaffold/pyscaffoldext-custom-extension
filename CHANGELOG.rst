@@ -2,6 +2,10 @@
 Changelog
 =========
 
+Version 0.4.1
+=============
+
+- Cosmetic changes
 
 Version 0.4
 ===========
