@@ -4,7 +4,7 @@
 .. image:: https://readthedocs.org/projects/pyscaffoldext-custom-extension/badge/?version=latest
     :alt: ReadTheDocs
     :target: https://pyscaffoldext-custom-extension.readthedocs.io/
-.. image:: https://img.shields.io/coveralls/github/pyscaffold/pyscaffold/master.svg
+.. image:: https://img.shields.io/coveralls/github/pyscaffold/pyscaffoldext-custom-extension/master.svg
     :alt: Coveralls
     :target: https://coveralls.io/r/pyscaffold/pyscaffoldext-custom-extension
 .. image:: https://img.shields.io/pypi/v/pyscaffoldext-custom-extension.svg
