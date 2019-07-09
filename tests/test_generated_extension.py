@@ -20,3 +20,18 @@ def test_generated_extension(tmpfolder, venv_run):
 
     with chdir("the_actual_project"):
         assert '' == venv_run("flake8")
+
+
+def test_generated_extension_without_prefix(tmpfolder, caplog):
+    # Ensure prefix is added by default
+    args = ["--custom-extension", "some_extension"]
+
+    opts = parse_args(args)
+    opts = process_opts(opts)
+    create_project(opts)
+    assert path_exists("pyscaffoldext-some_extension")
+
+    # Ensure an explanation on how to use
+    # `--force` to avoid preffixing is given
+    logs = caplog.text
+    assert '--force' in logs

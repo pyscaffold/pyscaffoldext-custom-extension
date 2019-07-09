@@ -3,9 +3,11 @@
 Main logic to create custom extensions
 """
 import argparse
+
 from pyscaffold.api import Extension, helpers
-from pyscaffold.extensions.no_skeleton import NoSkeleton
+from pyscaffold.api.helpers import logger
 from pyscaffold.extensions.namespace import Namespace
+from pyscaffold.extensions.no_skeleton import NoSkeleton
 from pyscaffold.extensions.pre_commit import PreCommit
 from pyscaffold.extensions.tox import Tox
 from pyscaffold.extensions.travis import Travis
@@ -18,12 +20,12 @@ PYSCAFFOLDEXT_NS = "pyscaffoldext"
 EXTENSION_FILE_NAME = "extension"
 
 
-class InvalidProjectNameException(RuntimeError):
+class InvalidProjectNameWarning(RuntimeWarning):
     """Project name does not comply with convention of an extension"""
 
     DEFAULT_MESSAGE = (
-        "An extension project name should start with "
-        "``pyscaffoldext-`` or use ``--force`` to overwrite.")
+       "The prefix ``pyscaffoldext-`` will be added to the project name. "
+       "If that is not your intention, please use ``--force`` to overwrite.")
 
     def __init__(self, message=DEFAULT_MESSAGE, *args, **kwargs):
         super().__init__(message, *args, **kwargs)
@@ -89,13 +91,19 @@ class CustomExtension(Extension):
         """
         actions = self.register(
                 actions,
+                check_project_name,
+                before='get_default_options'
+        )
+
+        actions = self.register(
+                actions,
                 add_extension_namespace,
                 after='get_default_options'
         )
 
         actions = self.register(
                 actions,
-                check_project_name,
+                check_package_name,
                 after='get_default_options'
         )
 
@@ -346,9 +354,7 @@ def add_test_custom_extension(struct, opts):
 def check_project_name(struct, opts):
     """Enforce the naming convention of PyScaffold extensions
 
-    The project name must start with 'pyscaffoldext-' and
-    the package name shouldn't contain the redundant
-    'pyscaffoldext_' in the beginning of the name.
+    The project name must start with 'pyscaffoldext-'.
 
     Args:
         struct (dict): project representation as (possibly) nested
@@ -360,8 +366,27 @@ def check_project_name(struct, opts):
         struct, opts: updated project representation and options
     """
     if not opts["project"].startswith("pyscaffoldext-") and not opts["force"]:
-        raise InvalidProjectNameException
+        logger.warning(InvalidProjectNameWarning())
+        opts["project"] = "pyscaffoldext-" + opts["project"]
 
+    return struct, opts
+
+
+def check_package_name(struct, opts):
+    """Enforce the naming convention of PyScaffold extensions
+
+    The package name shouldn't contain the redundant
+    'pyscaffoldext_' in the beginning of the name.
+
+    Args:
+        struct (dict): project representation as (possibly) nested
+            :obj:`dict`.
+        opts (dict): given options, see :obj:`create_project` for
+            an extensive list.
+
+    Returns:
+        struct, opts: updated project representation and options
+    """
     if opts["package"].startswith("pyscaffoldext_"):
         opts["package"] = opts["package"].replace("pyscaffoldext_", "")
 
