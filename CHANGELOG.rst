@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 0.5
+===========
+
+- Add ``pyscaffoldext`` by default warning the user
+
 Version 0.4.1
 =============
 
