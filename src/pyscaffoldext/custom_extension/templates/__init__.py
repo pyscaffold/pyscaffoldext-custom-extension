@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
 import string
-
 from pkg_resources import resource_string
 
 
@@ -14,9 +14,10 @@ def get_template(name):
         :obj:`string.Template`: template
     """
     file_name = "{name}.template".format(name=name)
-    data = resource_string("pyscaffoldext.custom_extension.templates",
-                           file_name)
-    return string.Template(data.decode("UTF-8"))
+    data = resource_string(__name__, file_name)
+    # we assure that line endings are converted to '\n' for all OS
+    data = data.decode(encoding="utf-8").replace(os.linesep, '\n')
+    return string.Template(data)
 
 
 def get_class_name_from_pkg_name(opts):
