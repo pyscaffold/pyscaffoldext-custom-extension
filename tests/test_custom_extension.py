@@ -1,11 +1,11 @@
 from os.path import exists as path_exists
 
+import pytest
+
 from pyscaffold.api import create_project
 from pyscaffold.cli import parse_args, process_opts
 
 from pyscaffoldext.custom_extension.extension import NamespaceError
-
-import pytest
 
 
 def test_add_custom_extension(tmpfolder):
