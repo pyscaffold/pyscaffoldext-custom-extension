@@ -12,14 +12,14 @@ def test_generated_extension(tmpfolder, venv_run):
     opts = process_opts(opts)
     create_project(opts)
     with chdir("pyscaffoldext-some_extension"):
-        assert '' == venv_run("flake8")
+        assert "" == venv_run("flake8")
         venv_run("python setup.py install")
 
     venv_run("putup --some-extension the_actual_project")
     assert path_exists("the_actual_project/setup.cfg")
 
     with chdir("the_actual_project"):
-        assert '' == venv_run("flake8")
+        assert "" == venv_run("flake8")
 
 
 def test_generated_extension_without_prefix(tmpfolder, caplog):
@@ -34,4 +34,4 @@ def test_generated_extension_without_prefix(tmpfolder, caplog):
     # Ensure an explanation on how to use
     # `--force` to avoid preffixing is given
     logs = caplog.text
-    assert '--force' in logs
+    assert "--force" in logs
