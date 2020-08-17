@@ -15,7 +15,8 @@ def test_entry_point(tmpfolder):
     config_updater = ConfigUpdater()
     with open("pyscaffoldext-some_extension/setup.cfg") as f:
         config_updater.read_file(f)
-    entry_point = config_updater.get("options.entry_points",
-                                     "pyscaffold.cli").value
-    assert entry_point == "\nsome_extension = pyscaffoldext." \
-                          "some_extension.extension:SomeExtension"
+    entry_point = config_updater.get("options.entry_points", "pyscaffold.cli").value
+    assert (
+        entry_point == "\nsome_extension = pyscaffoldext."
+        "some_extension.extension:SomeExtension"
+    )

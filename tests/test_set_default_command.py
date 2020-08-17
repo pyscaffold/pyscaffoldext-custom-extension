@@ -9,8 +9,9 @@ def test_no_skeleton(tmpfolder):
     opts = parse_args(args)
     opts = process_opts(opts)
     create_project(opts)
-    assert not path_exists("pyscaffoldext-some_extension/src/pyscaffoldext/"
-                           "some_extension/skeleton.py")
+    assert not path_exists(
+        "pyscaffoldext-some_extension/src/pyscaffoldext/" "some_extension/skeleton.py"
+    )
 
 
 def test_tox(tmpfolder):
