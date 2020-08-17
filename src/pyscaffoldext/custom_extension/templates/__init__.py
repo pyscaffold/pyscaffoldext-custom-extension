@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import string
+
 from pkg_resources import resource_string
 
 

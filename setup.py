@@ -9,8 +9,9 @@
     Learn more under: https://pyscaffold.org/
 """
 import sys
-from pkg_resources import VersionConflict, require
 from setuptools import setup
+
+from pkg_resources import VersionConflict, require
 
 try:
     require("setuptools>=38.3")
