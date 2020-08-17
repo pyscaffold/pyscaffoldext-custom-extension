@@ -1,11 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-    Dummy conftest.py for custom_extension.
-
-    If you don't know what this is for, just leave it empty.
-    Read more about conftest.py under:
-    https://pytest.org/latest/plugins.html
+"""Place for fixtures and configuration that will be used in most of the tests.
+A nice option is to put your ``autouse`` fixtures here.
 """
 from __future__ import absolute_import, division, print_function
 

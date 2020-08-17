@@ -19,6 +19,7 @@ pyscaffoldext-custom-extension
 
 PyScaffold extension that let's you create your own custom extensions.
 
+
 Description
 ===========
 
@@ -38,10 +39,30 @@ This will create a typical PyScaffold project template with some modifications:
 * assures that the project is named ``pyscaffoldext-notebooks`` in ``setup.cfg``,
 * sets the correct ``setup_requires`` and ``install_requires`` as well as the ``options.entry_points`` parameters in ``setup.cfg``,
 * automatically activates the extensions ``--no-skeleton``, ``--pre-commit``, ``--travis`` and
-  ``--tox`` since we want clean-coded, high-quality extensions,
+  since we want clean-coded, high-quality extensions,
 * creates a ``extension.py`` module holding a class ``Notebooks`` which serves you as a template for your extension,
 * adds basic unit tests checking that the invocation of your extension works and that it complies with our `flake8`_ code guidelines,
 * provides a modified ``README.rst`` indicating that this is a PyScaffold extensions and how to install it.
+
+
+.. pyscaffold-notes::
+
+Making Changes & Contributing
+=============================
+
+This project uses `pre-commit`_, please make sure to install it before making any
+changes::
+
+    $ pip install pre-commit
+    $ cd pyscaffoldext-custom-extension
+    $ pre-commit install
+
+It is a good idea to update the hooks to the latest version::
+
+    pre-commit autoupdate
+
+Please also check PyScaffold's own [CONTRIBUTING.rst file](https://github.com/pyscaffold/pyscaffold/blob/master/CONTRIBUTING.rst).
+
 
 Note
 ====
@@ -50,3 +71,4 @@ For more information about PyScaffold and its extension mechanism, check out htt
 
 .. _Jupyter notebook: https://jupyter-notebook.readthedocs.io/
 .. _flake8: http://flake8.pycqa.org/
+.. _pre-commit: http://pre-commit.com/

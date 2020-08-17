@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 0.6 (development)
+=========================
+
+- Updated to PyScaffold v4
+
 Version 0.5
 ===========
 

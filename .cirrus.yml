@@ -22,6 +22,8 @@ env:
     # Avoid information carried from one run to the other
     - rm -rf .coverage junit-*.xml .tox
   # The following scripts are also used in Windows, be aware the shell is not POSIX
+  build_script: &build
+    - python -m tox -e build  # Ensure PEP517-style build works
   test_script: &test
     - python -m tox -- -n 5 -rfEx --durations 10 --color yes --junit-xml junit-test.xml
     # ^  tox is better if invoked as a module on Windows/OSX
@@ -33,6 +35,24 @@ env:
 
 
 # ---- Task definitions ----
+
+typecheck_task:
+  name: typecheck (Linux - 3.8)
+  container: {image: "python:3.8-buster"}  # most recent => better type support
+  pip_cache: &pip-cache
+    folder: $PIP_CACHE
+  mypy_cache:
+    folder: .mypy_cache
+  install_script: &debian-install
+    - apt-get install -y git
+  mypy_install_script:
+    - python -m pip install --upgrade pip setuptools mypy -e .
+  clean_workspace_script:
+    - rm -rf junit-*.xml
+  typecheck_script:
+    - python -m mypy src --junit-xml junit-type.xml
+  always: *upload-junit
+
 
 linux_mac_task:
   # Use custom cloning since otherwise git tags are missing
@@ -46,12 +66,6 @@ linux_mac_task:
       git reset --hard $CIRRUS_CHANGE_IN_REPO
     fi
   matrix:
-    - name: test (Linux - 3.5)
-      container: {image: "python:3.5-buster"}
-      pip_cache: &pip-cache
-        folder: $PIP_CACHE
-      install_script: &debian-install
-        - apt-get install -y git
     - name: test (Linux - 3.6)
       container: {image: "python:3.6-buster"}
       pip_cache: *pip-cache
@@ -152,6 +166,7 @@ windows_task:
     # Avoid information carried from one run to the other
     # CMD is not capable of globbing, so we have to use PowerShell
     - ps: (rm -Recurse -Force -ErrorAction SilentlyContinue .tox,junit-*.xml)
+  build_script: *build
   test_script: *test
   always: *upload-junit
 
