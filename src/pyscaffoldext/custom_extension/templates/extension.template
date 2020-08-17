@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pyscaffold.api import Extension
+from pyscaffold.extensions import Extension
 
 
 class ${extension_class_name}(Extension):
