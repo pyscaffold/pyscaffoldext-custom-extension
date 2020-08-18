@@ -72,14 +72,15 @@ class CustomExtension(Extension):
 
     def activate(self, actions: List[Action]) -> List[Action]:
         """Activate extension, see :obj:`~pyscaffold.extension.Extension.activate`."""
-        actions = self.register(actions, enforce_options, after="get_default_options")
+        actions = self.register(actions, process_options, after="get_default_options")
         actions = self.register(actions, add_files)
         return actions
 
 
-def enforce_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
-    """The following options should be enforced:
+def process_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
+    """Process the given options enforcing policies and calculating derived ones.
 
+    Policies:
     - Fixed ``namespace`` value of pyscaffoldext (and no extra namespace)
     - The project name must start with ``pyscaffoldext-``.
     - The package name shouldn't contain the redundant ``pyscaffoldext_`` in the
