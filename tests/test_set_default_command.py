@@ -1,27 +1,26 @@
-from os.path import exists as path_exists
+from pathlib import Path
 
-from pyscaffold.api import create_project
-from pyscaffold.cli import parse_args
+from pyscaffold import cli
 
 
 def test_no_skeleton(tmpfolder):
-    args = ["--custom-extension", "pyscaffoldext-some_extension"]
-    opts = parse_args(args)
-    create_project(opts)
-    assert not path_exists(
-        "pyscaffoldext-some_extension/src/pyscaffoldext/" "some_extension/skeleton.py"
-    )
+    args = ["--no-config", "--custom-extension", "pyscaffoldext-some_extension"]
+    # --no-config: avoid extra config from dev's machine interference
+    cli.main(args)
+
+    file = "pyscaffoldext-some_extension/src/pyscaffoldext/some_extension/skeleton.py"
+    assert not Path(file).exists()
 
 
 def test_tox(tmpfolder):
-    args = ["--custom-extension", "pyscaffoldext-some_extension"]
-    opts = parse_args(args)
-    create_project(opts)
-    assert path_exists("pyscaffoldext-some_extension/tox.ini")
+    args = ["--no-config", "--custom-extension", "pyscaffoldext-some_extension"]
+    # --no-config: avoid extra config from dev's machine interference
+    cli.main(args)
+    assert Path("pyscaffoldext-some_extension/tox.ini").exists()
 
 
 def test_pre_commit(tmpfolder):
-    args = ["--custom-extension", "pyscaffoldext-some_extension"]
-    opts = parse_args(args)
-    create_project(opts)
-    assert path_exists("pyscaffoldext-some_extension/.pre-commit-config.yaml")
+    args = ["--no-config", "--custom-extension", "pyscaffoldext-some_extension"]
+    # --no-config: avoid extra config from dev's machine interference
+    cli.main(args)
+    assert Path("pyscaffoldext-some_extension/.pre-commit-config.yaml").exists()

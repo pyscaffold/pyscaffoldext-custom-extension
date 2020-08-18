@@ -1,21 +1,17 @@
-from os.path import exists as path_exists
+from pathlib import Path
 
 from configupdater import ConfigUpdater
-from pyscaffold.api import create_project
-from pyscaffold.cli import parse_args
+from pyscaffold import cli
 
 
 def test_entry_point(tmpfolder):
-    args = ["--custom-extension", "pyscaffoldext-some_extension"]
-    opts = parse_args(args)
-    create_project(opts)
-    assert path_exists("pyscaffoldext-some_extension/setup.cfg")
+    args = ["--no-config", "--custom-extension", "pyscaffoldext-some_extension"]
+    # --no-config: avoid extra config from dev's machine interference
+    cli.main(args)
+    assert Path("pyscaffoldext-some_extension/setup.cfg").exists()
 
-    config_updater = ConfigUpdater()
-    with open("pyscaffoldext-some_extension/setup.cfg") as f:
-        config_updater.read_file(f)
-    entry_point = config_updater.get("options.entry_points", "pyscaffold.cli").value
-    assert (
-        entry_point == "\nsome_extension = pyscaffoldext."
-        "some_extension.extension:SomeExtension"
-    )
+    setup_cfg = ConfigUpdater()
+    setup_cfg.read_string(Path("pyscaffoldext-some_extension/setup.cfg").read_text())
+    entry_point = setup_cfg.get("options.entry_points", "pyscaffold.cli").value
+    expected = "\nsome_extension = pyscaffoldext.some_extension.extension:SomeExtension"
+    assert entry_point == expected

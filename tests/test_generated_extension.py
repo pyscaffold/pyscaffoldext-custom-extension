@@ -1,22 +1,21 @@
 import logging
-from os.path import exists as path_exists
+from pathlib import Path
 
-from pyscaffold.api import create_project
-from pyscaffold.cli import parse_args
+from pyscaffold import cli
 from pyscaffold.file_system import chdir
 
 
 def test_generated_extension(tmpfolder, venv_run):
-    args = ["--custom-extension", "pyscaffoldext-some_extension"]
+    args = ["--no-config", "--custom-extension", "pyscaffoldext-some_extension"]
+    # --no-config: avoid extra config from dev's machine interference
 
-    opts = parse_args(args)
-    create_project(opts)
+    cli.main(args)
     with chdir("pyscaffoldext-some_extension"):
         assert "" == venv_run("flake8")
         venv_run("python setup.py install")
 
     venv_run("putup --some-extension the_actual_project")
-    assert path_exists("the_actual_project/setup.cfg")
+    assert Path("the_actual_project/setup.cfg").exists()
 
     with chdir("the_actual_project"):
         assert "" == venv_run("flake8")
@@ -25,11 +24,11 @@ def test_generated_extension(tmpfolder, venv_run):
 def test_generated_extension_without_prefix(tmpfolder, caplog):
     caplog.set_level(logging.WARNING)
     # Ensure prefix is added by default
-    args = ["--custom-extension", "some_extension"]
+    args = ["--no-config", "--custom-extension", "some_extension"]
+    # --no-config: avoid extra config from dev's machine interference
 
-    opts = parse_args(args)
-    create_project(opts)
-    assert path_exists("pyscaffoldext-some_extension")
+    cli.main(args)
+    assert Path("pyscaffoldext-some_extension").exists()
 
     # Ensure an explanation on how to use
     # `--force` to avoid preffixing is given
