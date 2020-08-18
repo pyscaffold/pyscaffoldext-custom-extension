@@ -187,7 +187,7 @@ coverage_task:
   install_script: *debian-install
   pip_install_script:
     pip install --user --upgrade coverage coveralls pre-commit
-  pre_commit_script:
+  pre_commit_run_script:
     - pre-commit install
     - pre-commit run --all-files
   <<: *REGULAR_TASK_TEMPLATE
