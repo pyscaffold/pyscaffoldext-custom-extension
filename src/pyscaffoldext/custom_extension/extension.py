@@ -6,6 +6,7 @@ from functools import partial, reduce
 from typing import List
 
 from packaging.version import Version
+from pyscaffold import dependencies as deps
 from pyscaffold.actions import Action, ActionParams, ScaffoldOpts, Structure
 from pyscaffold.extensions import Extension, include
 from pyscaffold.extensions.namespace import Namespace
@@ -103,7 +104,9 @@ def process_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     if opts["package"].startswith("pyscaffoldext_"):
         opts["package"] = opts["package"].replace("pyscaffoldext_", "")
 
-    # Additionally, we set another derived parameter used in the templates
+    opts["requirements"] = deps.add(opts.get("requirements", []), get_requirements())
+
+    # set another derived parameter used in the templates
     class_name = "".join(map(str.capitalize, opts["package"].split("_")))
     return struct, {**opts, "extension_class_name": class_name}
 
@@ -144,7 +147,7 @@ def modify_setupcfg(definition: Leaf, opts: ScaffoldOpts) -> ResolvedLeaf:
     setupcfg = ConfigUpdater()
     setupcfg.read_string(reify_content(contents, opts))
 
-    modifiers = (add_install_requires, add_pytest_requirements, add_entry_point)
+    modifiers = (add_pytest_requirements, add_entry_point)
     new_setupcfg = reduce(lambda acc, fn: fn(acc, opts), modifiers, setupcfg)
 
     return str(new_setupcfg), original_op
@@ -166,17 +169,6 @@ def add_entry_point(setupcfg: ConfigUpdater, opts: ScaffoldOpts) -> ConfigUpdate
     return setupcfg
 
 
-def add_install_requires(setupcfg: ConfigUpdater, _opts) -> ConfigUpdater:
-    """Add PyScaffold dependency to install_requires """
-    options = setupcfg["options"]
-    version_str = get_install_requires_version()
-    if "install_requires" in options:
-        options["install_requires"].value = version_str
-    else:
-        options["package_dir"].add_after.option("install_requires", version_str)
-    return setupcfg
-
-
 def add_pytest_requirements(setupcfg: ConfigUpdater, _opts) -> ConfigUpdater:
     """Add [options.extras_require] testing requirements for py.test"""
     extras_require = setupcfg["options.extras_require"]
@@ -186,12 +178,8 @@ def add_pytest_requirements(setupcfg: ConfigUpdater, _opts) -> ConfigUpdater:
     return setupcfg
 
 
-def get_install_requires_version():
-    """Retrieves pyscaffold version for install_requires
-
-    Returns:
-        str: install_requires definition
-    """
+def get_requirements() -> List[str]:
+    """List of requirements for install_requires"""
     current_version = Version(pyscaffold_version)
     major, minor, *_ = current_version.base_version.split(".")
     next_major = int(major) + 1
@@ -200,4 +188,4 @@ def get_install_requires_version():
     if current_version.is_prerelease:
         min_version = current_version
 
-    return f"pyscaffold>={min_version.public},<{next_major}"
+    return [f"pyscaffold>={min_version.public},<{next_major}"]
