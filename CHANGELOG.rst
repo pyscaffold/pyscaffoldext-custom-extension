@@ -5,7 +5,10 @@ Changelog
 Version 0.6 (development)
 =========================
 
-- Updated to PyScaffold v4
+- Changes required for PyScaffold v4.0
+- Updated templates for testing
+- Simplified templates package thanks to ``pyscaffold.templates.get_template``
+- Removed unnecessary ``coding: utf-8`` comments
 
 Version 0.5
 ===========
