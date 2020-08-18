@@ -123,6 +123,7 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
 
     files: Structure = {
         "README.rst": (get_template("readme"), NO_OVERWRITE),
+        "CONTRIBUTING.rst": (get_template("contributing"), NO_OVERWRITE),
         "setup.cfg": modify_setupcfg(struct["setup.cfg"], opts),
         "src": {
             opts["package"]: {

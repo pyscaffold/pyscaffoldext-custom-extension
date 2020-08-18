@@ -61,7 +61,7 @@ It is a good idea to update the hooks to the latest version::
 
     pre-commit autoupdate
 
-Please also check PyScaffold's own [CONTRIBUTING.rst file](https://github.com/pyscaffold/pyscaffold/blob/master/CONTRIBUTING.rst).
+Please also check PyScaffold's `contribution guidelines`_,
 
 
 Note
@@ -69,6 +69,8 @@ Note
 
 For more information about PyScaffold and its extension mechanism, check out http://pyscaffold.org/.
 
+
 .. _Jupyter notebook: https://jupyter-notebook.readthedocs.io/
 .. _flake8: http://flake8.pycqa.org/
 .. _pre-commit: http://pre-commit.com/
+.. _contribution guidelines: https://pyscaffold.org/en/latest/contributing.html
