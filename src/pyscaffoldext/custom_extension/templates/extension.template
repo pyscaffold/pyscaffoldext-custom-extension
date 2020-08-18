@@ -1,15 +1,35 @@
-# -*- coding: utf-8 -*-
+from typing import List
+
+from pyscaffold.actions import Action  # ActionParams, ScaffoldOpts, Structure
 from pyscaffold.extensions import Extension
+
+# from pyscaffold.operations import no_overwrite
+# from pyscaffold.structure import merge
+# from pyscaffold.templates import get_template
 
 
 class ${extension_class_name}(Extension):
     """
-    This class serves as the skeleton for your
-    new PyScaffold Extension. Refer to the official
-    documentation to discover how to implement a
-    PyScaffold extension.
-    (https://pyscaffold.org/en/latest/extensions.html)
+    This class serves as the skeleton for your new PyScaffold Extension. Refer
+    to the official documentation to discover how to implement a PyScaffold
+    extension - https://pyscaffold.org/en/latest/extensions.html
     """
 
-    def activate(self, actions):
+    def activate(self, actions: List[Action]) -> List[Action]:
+        """Activate extension. See :obj:`pyscaffold.extension.Extension.activate`."""
+        # actions = self.register(actions, add_files)
         return actions
+
+
+# def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
+#     """Add custom extension files. See :obj:`pyscaffold.actions.Action`"""
+
+#     template = get_template("awesome_file", relative_to=__name__)
+#     test_template = get_template("test_awesome_file", relative_to=__name__)
+
+#     files: Structure = {
+#         "src": {opts["package"]: {"awesome_file.py": (template, no_overwrite())}},
+#         "tests": {"test_awesome_file.py": (test_template, no_overwrite())},
+#     }
+
+#     return merge(struct, files), opts
