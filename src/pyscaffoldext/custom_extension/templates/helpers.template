@@ -1,4 +1,3 @@
-# TODO: Try always to keep this file in sync with the helpers.template
 import os
 import shlex
 import stat

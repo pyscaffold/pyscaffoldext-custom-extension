@@ -24,6 +24,16 @@ from . import templates
 PYSCAFFOLDEXT_NS = "pyscaffoldext"
 EXTENSION_FILE_NAME = "extension"
 NO_OVERWRITE = no_overwrite()
+TEST_DEPENDENCIES = (
+    "tox",
+    "pre-commit",
+    "setuptools_scm",
+    "virtualenv",
+    "configupdater",
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+)
 
 INVALID_PROJECT_NAME = (
     "The prefix ``pyscaffoldext-`` will be added to the package name "
@@ -123,7 +133,9 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
             }
         },
         "tests": {
+            "__init__.py": ("", NO_OVERWRITE),
             "conftest.py": (get_template("conftest"), NO_OVERWRITE),
+            "helpers.py": (get_template("helpers"), NO_OVERWRITE),
             "test_custom_extension.py": (
                 get_template("test_custom_extension"),
                 NO_OVERWRITE,
@@ -172,9 +184,7 @@ def add_entry_point(setupcfg: ConfigUpdater, opts: ScaffoldOpts) -> ConfigUpdate
 def add_pytest_requirements(setupcfg: ConfigUpdater, _opts) -> ConfigUpdater:
     """Add [options.extras_require] testing requirements for py.test"""
     extras_require = setupcfg["options.extras_require"]
-    extras_require["testing"].set_values(
-        ["flake8", "pytest", "pytest-cov", "pytest-virtualenv", "pytest-xdist"]
-    )
+    extras_require["testing"].set_values(TEST_DEPENDENCIES)
     return setupcfg
 
 

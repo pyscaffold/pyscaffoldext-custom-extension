@@ -2,9 +2,8 @@ import logging
 from pathlib import Path
 
 import pytest
-from pyscaffold import cli
+from pyscaffold import cli, shell
 from pyscaffold.file_system import chdir
-from pyscaffold.shell import get_executable
 
 from .helpers import run, run_common_tasks
 
@@ -22,10 +21,10 @@ def test_generated_extension(tmpfolder):
     cli.main(args)
     with chdir("pyscaffoldext-some_extension"):
         run_common_tasks()
-        putup = get_executable("putup", prefix=".venv", include_path=False)
+        putup = shell.get_executable("putup", prefix=".venv", include_path=False)
         assert putup
 
-    run(putup, "--venv", "--some-extension", "the_actual_project")
+    run(putup, "--some-extension", "the_actual_project")
     assert Path("the_actual_project/setup.cfg").exists()
 
 
