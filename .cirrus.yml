@@ -178,8 +178,6 @@ coverage_task:
   container: {image: "python:3.6-buster"}
   env:
     COVERAGE: yes
-  pip_cache: *pip-cache
-  pre_commit_cache: *pre-commit-cache
   depends_on:
     - test (Linux - 3.6)
     - test (Linux - 3.7)
