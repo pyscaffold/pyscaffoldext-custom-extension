@@ -1,11 +1,23 @@
 import os
+import shlex
 import stat
+import sys
 import traceback
 from pathlib import Path
 from shutil import rmtree
+from subprocess import STDOUT, CalledProcessError, check_output
 from time import sleep
 from uuid import uuid4
 from warnings import warn
+
+from pyscaffold.shell import get_executable
+
+IS_POSIX = os.name == "posix"
+
+PYTHON = sys.executable
+"""Same python executable executing the tests... Hopefully the one inside the virtualenv
+inside tox folder. If we install packages by mistake is not a huge problem.
+"""
 
 
 def uniqstr():
@@ -39,3 +51,56 @@ def set_writable(func, path, _exc_info):
 
     # now it either works or re-raise the exception
     func(path)
+
+
+def run(*args, **kwargs):
+    """Run the external command. See ``subprocess.check_output``."""
+    # normalize args
+    if len(args) == 1:
+        if isinstance(args[0], str):
+            args = shlex.split(args[0], posix=IS_POSIX)
+        else:
+            args = args[0]
+
+    if args[0] in ("python", "putup", "pip", "tox", "pytest", "pre-commit"):
+        raise SystemError("Please specify an executable with explicit path")
+
+    opts = dict(stderr=STDOUT, universal_newlines=True)
+    opts.update(kwargs)
+
+    try:
+        return check_output(args, **opts)
+    except CalledProcessError as ex:
+        print("Error while running command:")
+        print(args)
+        print(opts)
+        traceback.print_exc()
+        msg = "******************** Terminal ($? = {}) ********************\n{}"
+        print(msg.format(ex.returncode, ex.output))
+        raise
+
+
+def run_common_tasks(tests=True, docs=True, pre_commit=True, install=True):
+    # Requires tox, setuptools_scm and pre-commit in setup.cfg ::
+    # opts.extras_require.testing
+    if tests:
+        run(f"{PYTHON} -m tox")
+
+    run(f"{PYTHON} -m tox -e build")
+    wheels = list(Path("dist").glob("*.whl"))
+    assert wheels
+
+    run(f"{PYTHON} setup.py --version")
+
+    if docs:
+        run(f"{PYTHON} -m tox -e docs")
+        run(f"{PYTHON} -m tox -e doctests")
+
+    if pre_commit:
+        run(f"{PYTHON} -m pre_commit run --all-files")
+
+    if install:
+        assert Path(".venv").exists(), "Please use --venv when generating the project"
+        pip = get_executable("pip", prefix=".venv", include_path=False)
+        assert pip, "Pip not found, make sure you have used the --venv option"
+        run(pip, "install", wheels[0])

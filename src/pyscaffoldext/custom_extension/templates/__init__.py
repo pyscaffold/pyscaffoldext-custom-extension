@@ -30,5 +30,4 @@ def extension(opts):
         str: file content as string
     """
     template = get_template("extension")
-    opts["extension_class_name"] = get_class_name_from_pkg_name(opts)
     return template.safe_substitute(opts)

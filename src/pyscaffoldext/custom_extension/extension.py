@@ -17,8 +17,7 @@ from pyscaffold.operations import no_overwrite
 from pyscaffold.structure import Leaf, ResolvedLeaf, merge, reify_content, resolve_leaf
 from pyscaffold.update import ConfigUpdater, pyscaffold_version
 
-from . import templates
-from .templates import get_class_name_from_pkg_name, get_template
+from .templates import get_template
 
 PYSCAFFOLDEXT_NS = "pyscaffoldext"
 EXTENSION_FILE_NAME = "extension"
@@ -99,7 +98,9 @@ def enforce_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     if opts["package"].startswith("pyscaffoldext_"):
         opts["package"] = opts["package"].replace("pyscaffoldext_", "")
 
-    return struct, opts
+    # Additionally, we set another derived parameter used in the templates
+    class_name = "".join(map(str.capitalize, opts["package"].split("_")))
+    return struct, {**opts, "extension_class_name": class_name}
 
 
 def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
@@ -110,7 +111,7 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         "setup.cfg": modify_setupcfg(struct["setup.cfg"], opts),
         "src": {
             opts["package"]: {
-                f"{EXTENSION_FILE_NAME}.py": (templates.extension, NO_OVERWRITE)
+                f"{EXTENSION_FILE_NAME}.py": (get_template("extension"), NO_OVERWRITE)
             }
         },
         "tests": {
@@ -153,17 +154,9 @@ def add_entry_point(setupcfg: ConfigUpdater, opts: ScaffoldOpts) -> ConfigUpdate
 
     entry_points = setupcfg[entry_points_key]
     entry_points.insert_at(0).option("pyscaffold.cli")
-    entry_points["pyscaffold.cli"].set_values(
-        [
-            "{} = {}.{}.{}:{}".format(
-                opts["package"],
-                opts["namespace"],
-                opts["package"],
-                EXTENSION_FILE_NAME,
-                get_class_name_from_pkg_name(opts),
-            )
-        ]
-    )
+    template = "{package} = {namespace}.{package}.{file_name}:{extension_class_name}"
+    value = template.format(file_name=EXTENSION_FILE_NAME, **opts)
+    entry_points["pyscaffold.cli"].set_values([value])
 
     return setupcfg
 

@@ -1,24 +1,35 @@
 import logging
 from pathlib import Path
 
+import pytest
 from pyscaffold import cli
 from pyscaffold.file_system import chdir
+from pyscaffold.shell import get_executable
+
+from .helpers import run, run_common_tasks
 
 
-def test_generated_extension(tmpfolder, venv_run):
-    args = ["--no-config", "--custom-extension", "pyscaffoldext-some_extension"]
-    # --no-config: avoid extra config from dev's machine interference
+@pytest.mark.slow
+@pytest.mark.system
+def test_generated_extension(tmpfolder):
+    args = [
+        "--no-config",  # <- avoid extra config from dev's machine interference
+        "--venv",  # <- generate a venv that we will use to install the project
+        "--custom-extension",
+        "pyscaffoldext-some_extension",
+    ]
 
     cli.main(args)
     with chdir("pyscaffoldext-some_extension"):
-        assert "" == venv_run("flake8")
-        venv_run("python setup.py install")
+        run_common_tasks()
+        putup = get_executable("putup", prefix=".venv", include_path=False)
+        assert putup
 
-    venv_run("putup --some-extension the_actual_project")
+    run(putup, "--venv", "--some-extension", "the_actual_project")
     assert Path("the_actual_project/setup.cfg").exists()
 
     with chdir("the_actual_project"):
-        assert "" == venv_run("flake8")
+        run_common_tasks()
 
 
 def test_generated_extension_without_prefix(tmpfolder, caplog):

@@ -1,30 +1,31 @@
 from pathlib import Path
 
-from pyscaffold.api import create_project
-from pyscaffold.cli import parse_args
-from pyscaffold.file_sytem import chdir
+from pyscaffold import cli
+from pyscaffold.file_system import chdir
 
-EXT_FLAG = "--${package}"
+from pyscaffoldext.${package}.extension import ${extension_class_name}
+
+EXT_FLAG = ${extension_class_name}().flag
 
 
 def test_add_custom_extension(tmpfolder):
-    args = [EXT_FLAG, "my_project", "-p", "my_package"]
-    opts = parse_args(args)
-    create_project(opts)
+    args = ["--no-config", EXT_FLAG, "my_project", "-p", "my_package"]
+    # --no-config: avoid extra config from dev's machine interference
+    cli.main(args)
 
     assert Path("my_project/src/my_package/__init__.py").exists()
 
 
 def test_generated_extension_flake8(tmpfolder, venv_run):
-    args = [EXT_FLAG, "my_project"]
-    opts = parse_args(args)
-    create_project(opts)
+    args = ["--no-config", EXT_FLAG, "my_project"]
+    # --no-config: avoid extra config from dev's machine interference
+    cli.main(args)
 
     with chdir("my_project"):
         assert "" == venv_run("flake8")
         venv_run("python setup.py install")
 
-    venv_run("putup {ext_flag} the_actual_project".format(ext_flag=EXT_FLAG))
+    venv_run(f"putup {EXT_FLAG} the_actual_project")
     assert Path("the_actual_project/setup.cfg").exists()
 
     with chdir("the_actual_project"):

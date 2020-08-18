@@ -5,7 +5,6 @@ from __future__ import absolute_import, division, print_function
 
 import logging
 import os
-import shlex
 
 import pytest
 from pyscaffold.log import ReportFormatter
@@ -24,28 +23,6 @@ def tmpfolder(tmp_path):
     finally:
         os.chdir(old_path)
         rmpath(new_path)
-
-
-@pytest.fixture
-def venv(virtualenv):
-    """Create a virtualenv for each test"""
-    return virtualenv
-
-
-@pytest.fixture
-def venv_run(venv):
-    """Run a command inside the venv"""
-
-    def _run(*args, **kwargs):
-        # pytest-virtualenv doesn't play nicely with external os.chdir
-        # so let's be explicit about it...
-        kwargs["cd"] = os.getcwd()
-        kwargs["capture"] = True
-        if len(args) == 1 and isinstance(args[0], str):
-            args = shlex.split(args[0])
-        return venv.run(args, **kwargs).strip()
-
-    return _run
 
 
 @pytest.fixture(autouse=True)
