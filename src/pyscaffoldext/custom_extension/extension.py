@@ -2,7 +2,7 @@
 """
 Main logic to create custom extensions
 """
-from functools import reduce
+from functools import partial, reduce
 from typing import List
 
 from packaging.version import Version
@@ -15,9 +15,10 @@ from pyscaffold.extensions.travis import Travis
 from pyscaffold.log import logger
 from pyscaffold.operations import no_overwrite
 from pyscaffold.structure import Leaf, ResolvedLeaf, merge, reify_content, resolve_leaf
+from pyscaffold.templates import get_template
 from pyscaffold.update import ConfigUpdater, pyscaffold_version
 
-from .templates import get_template
+from . import templates
 
 PYSCAFFOLDEXT_NS = "pyscaffoldext"
 EXTENSION_FILE_NAME = "extension"
@@ -29,6 +30,9 @@ INVALID_PROJECT_NAME = (
     "If that is not your intention, please use ``--force`` to overwrite."
 )
 """Project name does not comply with convention of an extension"""
+
+
+get_template = partial(get_template, relative_to=templates)
 
 
 class NamespaceError(RuntimeError):
