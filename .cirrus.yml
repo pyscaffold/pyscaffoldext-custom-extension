@@ -11,7 +11,7 @@ env:
   LANG: C.UTF-8
   COVERAGE: NO
 
-# This template is used in all tasks
+# This template is used in most of the tasks
 .regular_task_template: &REGULAR_TASK_TEMPLATE
   pip_cache: &pip-cache
     folder: $PIP_CACHE
@@ -30,7 +30,7 @@ env:
   build_script: &build
     - python -m tox -e build  # Ensure PEP517-style build works
   test_script: &test
-    - python -m tox -- -n 5 -rfEx --durations 10 --color yes --junit-xml junit-test.xml
+    - python -m tox -- -rfEx --durations 10 --color yes --junit-xml junit-test.xml
     # ^  tox is better if invoked as a module on Windows/OSX
   always: &upload-junit
     upload_junit_artifacts:
@@ -90,7 +90,7 @@ linux_mac_task:
       extra_install_script:
         - apt-get update
         - apt-get install -y --fix-missing gcc python3-dev
-          # ^  required by a weird conda bug...
+          # ^  Required by a weird conda bug... Aparently this is need for isolated builds
           #    https://cirrus-ci.com/task/5049814234693632?command=test#L251
     - name: test (OS X)
       osx_instance: {image: "catalina-xcode"}
@@ -188,7 +188,7 @@ coverage_task:
   install_script: *debian-install
   pip_install_script:
     pip install --user --upgrade coverage coveralls pre-commit
-  pre_commit_run_script:
+  precommit_script:
     - pre-commit install
     - pre-commit run --all-files
   <<: *REGULAR_TASK_TEMPLATE
