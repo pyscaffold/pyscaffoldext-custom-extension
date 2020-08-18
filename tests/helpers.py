@@ -93,8 +93,7 @@ def run_common_tasks(tests=True, docs=True, pre_commit=True, install=True):
     run(f"{PYTHON} setup.py --version")
 
     if docs:
-        run(f"{PYTHON} -m tox -e docs")
-        run(f"{PYTHON} -m tox -e doctests")
+        run(f"{PYTHON} -m tox -e docs,doctests")
 
     if pre_commit:
         run(f"{PYTHON} -m pre_commit run --all-files")

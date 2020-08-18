@@ -28,9 +28,6 @@ def test_generated_extension(tmpfolder):
     run(putup, "--venv", "--some-extension", "the_actual_project")
     assert Path("the_actual_project/setup.cfg").exists()
 
-    with chdir("the_actual_project"):
-        run_common_tasks()
-
 
 def test_generated_extension_without_prefix(tmpfolder, caplog):
     caplog.set_level(logging.WARNING)
