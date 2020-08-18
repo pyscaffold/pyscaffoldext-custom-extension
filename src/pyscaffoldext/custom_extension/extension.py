@@ -198,4 +198,4 @@ def get_requirements() -> List[str]:
     if current_version.is_prerelease:
         min_version = current_version
 
-    return [f"pyscaffold>={min_version.public},<{next_major}"]
+    return [f"pyscaffold>={min_version.public},<{next_major}.0a0"]
