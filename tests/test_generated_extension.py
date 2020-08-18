@@ -1,5 +1,7 @@
 import logging
+import os
 from pathlib import Path
+from subprocess import CalledProcessError
 
 import pytest
 from pyscaffold import cli, shell
@@ -20,7 +22,13 @@ def test_generated_extension(tmpfolder):
 
     cli.main(args)
     with chdir("pyscaffoldext-some_extension"):
-        run_common_tasks()
+        try:
+            run_common_tasks()
+        except CalledProcessError as ex:
+            if os.name == "nt" and "too long" in ex.output:
+                pytest.skip("Windows really have a problem with long paths....")
+            else:
+                raise
         putup = shell.get_executable("putup", prefix=".venv", include_path=False)
         assert putup
 
