@@ -97,7 +97,11 @@ def run_common_tasks(tests=True, docs=True, pre_commit=True, install=True):
         run(f"{PYTHON} -m tox -e docs,doctests")
 
     if pre_commit:
-        run(f"{PYTHON} -m pre_commit run --all-files")
+        try:
+            run(f"{PYTHON} -m pre_commit run --all-files")
+        except CalledProcessError:
+            print(run(get_executable("git"), "diff"))
+            raise
 
     if install:
         assert Path(".venv").exists(), "Please use --venv when generating the project"
