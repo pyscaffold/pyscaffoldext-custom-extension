@@ -10,7 +10,7 @@ Usage
 Just install this package with ``pip install ${project}`` and note that ``putup -h`` shows a new option ``--${package}``. Use this flag to ...
 
 
-.. pyscaffold-notes::
+.. _pyscaffold-notes:
 
 Note
 ====

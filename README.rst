@@ -45,7 +45,7 @@ This will create a typical PyScaffold project template with some modifications:
 * provides a modified ``README.rst`` indicating that this is a PyScaffold extensions and how to install it.
 
 
-.. pyscaffold-notes::
+.. _pyscaffold-notes:
 
 Making Changes & Contributing
 =============================
