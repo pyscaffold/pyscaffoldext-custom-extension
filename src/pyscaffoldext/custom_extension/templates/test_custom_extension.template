@@ -22,6 +22,14 @@ def test_add_custom_extension(tmpfolder):
     assert Path("my_project/src/my_package/__init__.py").exists()
 
 
+def test_add_custom_extension_and_pretend(tmpfolder):
+    args = ["--no-config", "--pretend", EXT_FLAG, "my_project", "-p", "my_package"]
+    # --no-config: avoid extra config from dev's machine interference
+    cli.main(args)
+
+    assert not Path("my_project").exists()
+
+
 # To use marks make sure to uncomment them in setup.cfg
 # @pytest.mark.slow
 def test_generated_extension(tmpfolder):

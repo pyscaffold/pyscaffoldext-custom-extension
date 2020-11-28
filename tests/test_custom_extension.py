@@ -19,6 +19,19 @@ def test_add_custom_extension(tmpfolder):
     assert Path(extension).exists()
 
 
+def test_add_custom_extension_and_pretend(tmpfolder):
+    args = [
+        "pyscaffoldext-my_project",
+        "--no-config",  # <- Avoid extra config from dev's machine interference
+        "--pretend",
+        "--custom-extension",
+        "--package",
+        "my_extension",
+    ]
+    cli.main(args)
+    assert not Path("pyscaffoldext-my_project").exists()
+
+
 def test_add_custom_extension_with_namespace(tmpfolder):
     # We expect the second namespace to be just ignored
     args = [
