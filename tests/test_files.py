@@ -10,7 +10,6 @@ def test_files(tmpfolder):
     files = (
         "README.rst",
         "CONTRIBUTING.rst",
-        "environment.yml",
         ".pre-commit-config.yaml",
         ".github/workflows/publish-package.yml",
     )
