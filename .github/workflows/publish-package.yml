@@ -36,3 +36,24 @@ jobs:
         python setup.py dists
         twine check dist/*  # check if it will render correctly on PyPI
         twine upload --verbose dist/*
+
+
+  publish_package_with_tox:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # avoids shallow checkout as needed by setuptools-scm
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Build and Publish
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PYSCAFFOLD_GITHUB }}
+      run: |
+        python -m pip install --upgrade pip setuptools tox
+        python -m tox -e clean,build,publish -- --verbose --repository testpypi
