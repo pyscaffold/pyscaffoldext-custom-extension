@@ -6,10 +6,10 @@ from packaging.version import Version
 from pyscaffold import dependencies as deps
 from pyscaffold.actions import Action, ActionParams, ScaffoldOpts, Structure
 from pyscaffold.extensions import Extension, include
+from pyscaffold.extensions.cirrus import Cirrus
 from pyscaffold.extensions.namespace import Namespace
 from pyscaffold.extensions.no_skeleton import NoSkeleton
 from pyscaffold.extensions.pre_commit import PreCommit
-from pyscaffold.extensions.travis import Travis
 from pyscaffold.log import logger
 from pyscaffold.operations import no_overwrite
 from pyscaffold.structure import Leaf, ResolvedLeaf, merge, reify_content, resolve_leaf
@@ -40,7 +40,7 @@ INVALID_PROJECT_NAME = (
 """Project name does not comply with convention of an extension"""
 
 
-get_template = partial(get_template, relative_to=templates)
+template = partial(get_template, relative_to=templates)
 
 
 class NamespaceError(RuntimeError):
@@ -74,7 +74,7 @@ class CustomExtension(Extension):
             self.flag,
             help=self.help_text,
             nargs=0,
-            action=include(NoSkeleton(), Namespace(), PreCommit(), Travis(), self),
+            action=include(NoSkeleton(), Namespace(), PreCommit(), Cirrus(), self),
         )
         return self
 
@@ -122,20 +122,26 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Add custom extension files. See :obj:`pyscaffold.actions.Action`"""
 
     files: Structure = {
-        "README.rst": (get_template("readme"), NO_OVERWRITE),
-        "CONTRIBUTING.rst": (get_template("contributing"), NO_OVERWRITE),
+        ".github": {
+            "workflows": {
+                "publish-package.yml": (template("publish_package"), NO_OVERWRITE)
+            }
+        },
+        "README.rst": (template("readme"), NO_OVERWRITE),
+        "CONTRIBUTING.rst": (template("contributing"), NO_OVERWRITE),
         "setup.cfg": modify_setupcfg(struct["setup.cfg"], opts),
+        "environment.yml": (template("environment"), NO_OVERWRITE),
         "src": {
             opts["package"]: {
-                f"{EXTENSION_FILE_NAME}.py": (get_template("extension"), NO_OVERWRITE)
+                f"{EXTENSION_FILE_NAME}.py": (template("extension"), NO_OVERWRITE)
             }
         },
         "tests": {
             "__init__.py": ("", NO_OVERWRITE),
-            "conftest.py": (get_template("conftest"), NO_OVERWRITE),
-            "helpers.py": (get_template("helpers"), NO_OVERWRITE),
+            "conftest.py": (template("conftest"), NO_OVERWRITE),
+            "helpers.py": (template("helpers"), NO_OVERWRITE),
             "test_custom_extension.py": (
-                get_template("test_custom_extension"),
+                template("test_custom_extension"),
                 NO_OVERWRITE,
             ),
         },
