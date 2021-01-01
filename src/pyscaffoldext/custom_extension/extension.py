@@ -130,7 +130,6 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         "README.rst": (template("readme"), NO_OVERWRITE),
         "CONTRIBUTING.rst": (template("contributing"), NO_OVERWRITE),
         "setup.cfg": modify_setupcfg(struct["setup.cfg"], opts),
-        "environment.yml": (template("environment"), NO_OVERWRITE),
         "src": {
             opts["package"]: {
                 f"{EXTENSION_FILE_NAME}.py": (template("extension"), NO_OVERWRITE)
