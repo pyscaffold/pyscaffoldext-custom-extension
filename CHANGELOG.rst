@@ -9,6 +9,8 @@ Version 0.6 (development)
 - Updated templates for testing
 - Simplified templates package thanks to ``pyscaffold.templates.get_template``
 - Removed unnecessary ``coding: utf-8`` comments
+- Replaced ``travis`` with ``cirrus`` extension
+- Version scheme changed to ``no-guess-dev`` (from ``setuptools_scm``)
 
 Version 0.5
 ===========
