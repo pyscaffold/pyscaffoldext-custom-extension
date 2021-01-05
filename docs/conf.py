@@ -46,7 +46,9 @@ except FileNotFoundError:
 try:
     import sphinx
 
-    cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
+    cmd_line_template = (
+        "sphinx-apidoc --implicit-namespaces -f -o {outputdir} {moduledir}"
+    )
     cmd_line = cmd_line_template.format(outputdir=output_dir, moduledir=module_dir)
 
     args = cmd_line.split(" ")
@@ -92,7 +94,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "pyscaffoldext-custom-extension"
-copyright = "2020, Simone Robutti"
+copyright = "2021, Simone Robutti"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -279,5 +281,5 @@ intersphinx_mapping = {
     "sklearn": ("https://scikit-learn.org/stable", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
-    "pyscaffold": ("http://pyscaffold.org/en/stable", None),
+    "pyscaffold": ("https://pyscaffold.org/en/stable", None),
 }
