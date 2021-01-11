@@ -23,15 +23,18 @@ PyScaffold extension that lets you create your own custom extensions.
 Description
 ===========
 
-This extension serves as a support for the users interested in developing their own extension for PyScaffold. It configures your project so that you can start writing your extension logic and tests right away, taking care of all the wiring required to conform to PyScaffold's needs.
+This extension serves as a support for the users interested in developing their own extension for PyScaffold.
+It configures your project so that you can start writing your extension logic and tests right away,
+taking care of all the wiring required to conform to PyScaffold's needs.
 
-Let's say you want to create an extension named ``notebooks`` that creates a notebooks folder with some template `Jupyter notebook`_. After having installed this extension with::
+Let's say you want to create an extension named ``notebooks`` that creates a notebooks folder with some template `Jupyter notebook`_.
+After having installed this extension with::
 
- pip install pyscaffoldext-custom-extension
+    pip install pyscaffoldext-custom-extension
 
 you will be able to just use it with::
 
- putup --custom-extension notebooks
+    putup --custom-extension notebooks
 
 This will create a typical PyScaffold project template with some modifications:
 
@@ -53,9 +56,9 @@ Making Changes & Contributing
 This project uses `pre-commit`_, please make sure to install it before making any
 changes::
 
-    $ pip install pre-commit
-    $ cd pyscaffoldext-custom-extension
-    $ pre-commit install
+    pip install pre-commit
+    cd pyscaffoldext-custom-extension
+    pre-commit install
 
 It is a good idea to update the hooks to the latest version::
 
