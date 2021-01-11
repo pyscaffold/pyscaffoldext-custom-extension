@@ -2,8 +2,12 @@
 Changelog
 =========
 
-Version 0.6 (development)
-=========================
+..
+    Version 0.6.1 (development)
+    ===========================
+
+Version 0.6
+===========
 
 - Changes required for PyScaffold v4.0
 - Updated templates for testing
@@ -11,6 +15,8 @@ Version 0.6 (development)
 - Removed unnecessary ``coding: utf-8`` comments
 - Replaced ``travis`` with ``cirrus`` extension
 - Version scheme changed to ``no-guess-dev`` (from ``setuptools_scm``)
+- Fixed references to PyScaffold in the docs, by adding it as a doc requirement, #23
+- Added Github Actions template for automatically publishing tags to PyPI
 
 Version 0.5
 ===========
