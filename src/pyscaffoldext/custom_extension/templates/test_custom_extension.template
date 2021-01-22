@@ -7,7 +7,7 @@ from pyscaffoldext.${package}.extension import ${extension_class_name}
 
 from .helpers import run_common_tasks
 
-EXT_FLAG = ${extension_class_name}().flag
+EXT_FLAGS = [${extension_class_name}().flag]
 
 # If you need to check logs with caplog, have a look on
 # pyscaffoldext-custom-extension's tests/conftest.py file and the
@@ -33,10 +33,15 @@ def test_add_custom_extension_and_pretend(tmpfolder):
 # To use marks make sure to uncomment them in setup.cfg
 # @pytest.mark.slow
 def test_generated_extension(tmpfolder):
-    args = ["--no-config", "--venv", "--pre-commit", EXT_FLAG, "my_project"]
-    # --no-config: avoid extra config from dev's machine interference
-    # --venv: generate a venv so we can install the resulting project
-    # --pre-commit: ensure generated files respect repository conventions
+    args = [
+        "my_project",
+        "--no-config",  # avoid extra config from dev's machine interference
+        "--venv",  # generate a venv so we can install the resulting project
+        "--pre-commit",  # ensure generated files respect repository conventions
+        "--namespace",  # it is very easy to forget users might want to use namespaces
+        "my.ns",  # ... so we automatically test the worst case scenario
+        *EXT_FLAGS,
+    ]
     cli.main(args)
 
     with chdir("my_project"):
