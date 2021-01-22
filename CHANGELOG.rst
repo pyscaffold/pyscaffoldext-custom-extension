@@ -3,8 +3,13 @@ Changelog
 =========
 
 ..
-    Version 0.6.1 (development)
+    Version 0.6.2 (development)
     ===========================
+
+Version 0.6.1
+=============
+
+- Ensure generated extension is tested in combination with ``--namespace``, #24
 
 Version 0.6
 ===========
