@@ -2,9 +2,10 @@
 Changelog
 =========
 
-..
-    Version 0.6.2 (development)
-    ===========================
+Version 0.6.2
+=============
+
+- Update configupdater to version >= 2.0
 
 Version 0.6.1
 =============
