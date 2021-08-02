@@ -70,12 +70,12 @@ Please also check PyScaffold's `contribution guidelines`_,
 Note
 ====
 
-For more information about PyScaffold and its extension mechanism, check out http://pyscaffold.org/.
+For more information about PyScaffold and its extension mechanism, check out https://pyscaffold.org/.
 
 
 .. _Jupyter notebook: https://jupyter-notebook.readthedocs.io/
-.. _flake8: http://flake8.pycqa.org/
-.. _pre-commit: http://pre-commit.com/
+.. _flake8: https://flake8.pycqa.org/
+.. _pre-commit: https://pre-commit.com/
 .. _contribution guidelines: https://pyscaffold.org/en/latest/contributing.html
 .. _pip: https://pip.pypa.io/en/stable/
 .. _PyPI: https://pypi.org
