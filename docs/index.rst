@@ -27,4 +27,4 @@ Indices and tables
 
 
 .. _Jupyter notebook: https://jupyter-notebook.readthedocs.io/
-.. _flake8: http://flake8.pycqa.org/
+.. _flake8: https://flake8.pycqa.org/

@@ -98,6 +98,7 @@ def process_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Process the given options enforcing policies and calculating derived ones.
 
     Policies:
+
     - Fixed ``namespace`` value of pyscaffoldext (and no extra namespace)
     - The project name must start with ``pyscaffoldext-``.
     - The package name shouldn't contain the redundant ``pyscaffoldext_`` in the
