@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 0.6.3
+=============
+
+- Update dependencies to include ConfigUpdater 3.x
+
 Version 0.6.2
 =============
 
