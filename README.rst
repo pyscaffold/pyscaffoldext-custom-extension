@@ -23,7 +23,7 @@ PyScaffold extension that lets you create your own custom extensions.
 Description
 ===========
 
-This extension serves as a support for the users interested in developing their own extension for PyScaffold.
+This extension serves as a template for the users interested in developing their own extension for PyScaffold.
 It configures your project so that you can start writing your extension logic and tests right away,
 taking care of all the wiring required to conform to PyScaffold's needs.
 
