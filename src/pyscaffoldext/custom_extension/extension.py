@@ -1,6 +1,5 @@
 """Main logic to create custom extensions"""
 from functools import partial, reduce, wraps
-from pathlib import Path
 from typing import List
 
 from packaging.version import Version
