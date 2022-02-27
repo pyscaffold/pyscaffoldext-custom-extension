@@ -1,10 +1,11 @@
 """Main logic to create custom extensions"""
-from functools import partial, reduce
+from functools import partial, reduce, wraps
+from pathlib import Path
 from typing import List
 
 from packaging.version import Version
 from pyscaffold import dependencies as deps
-from pyscaffold.actions import Action, ActionParams, ScaffoldOpts, Structure
+from pyscaffold.actions import Action, ActionParams, ScaffoldOpts, Structure, invoke
 from pyscaffold.extensions import Extension, include
 from pyscaffold.extensions.cirrus import Cirrus
 from pyscaffold.extensions.namespace import Namespace
@@ -82,7 +83,7 @@ class CustomExtension(Extension):
             self.flag,
             help=self.help_text,
             nargs=0,
-            action=include(NoSkeleton(), Namespace(), PreCommit(), Cirrus(), self),
+            action=include(NoSkeleton(), Namespace(), PreCommit(), self),
         )
         return self
 
@@ -91,7 +92,12 @@ class CustomExtension(Extension):
         actions = self.register(actions, process_options, after="get_default_options")
         actions = self.register(actions, add_doc_requirements)
         actions = self.register(actions, add_files)
-        return actions
+
+        # Let's postpone adding CI, and just add Cirrus by default if the user has
+        # not chosen a different service
+        cirrus_actions = [a for a in Cirrus().activate(actions) if a not in actions]
+        add_ci = wraps(add_cirrus_ci)(partial(add_cirrus_ci, cirrus_actions))
+        return self.register(actions, add_ci, before="create_structure")
 
 
 def process_options(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
@@ -132,11 +138,6 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Add custom extension files. See :obj:`pyscaffold.actions.Action`"""
 
     files: Structure = {
-        ".github": {
-            "workflows": {
-                "publish-package.yml": (template("publish_package"), NO_OVERWRITE)
-            }
-        },
         "README.rst": (template("readme"), NO_OVERWRITE),
         "CONTRIBUTING.rst": (template("contributing"), NO_OVERWRITE),
         "setup.cfg": modify_setupcfg(struct["setup.cfg"], opts),
@@ -230,6 +231,29 @@ def add_doc_requirements(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     files: Structure = {"docs": {"requirements.txt": (new_contents, file_op)}}
 
     return merge(struct, files), opts
+
+
+def add_cirrus_ci(
+    cirrus_actions: List[Action], struct: Structure, opts: ScaffoldOpts
+) -> ActionParams:
+    """Opportunistically add CirrusCI config if no other CI service was added."""
+
+    uses_github_actions = struct.get(".github", {}).get("workflows") is not None
+    other_ci_files = [".gitlab-ci.yml"]
+
+    if uses_github_actions or any(f in struct for f in other_ci_files):
+        return struct, opts
+
+    # No other CI service is active, let's add Cirrus + publish-package workflow
+    files = {
+        ".github": {
+            "workflows": {
+                "publish-package.yml": (template("publish_package"), NO_OVERWRITE)
+            }
+        }
+    }
+    struct = merge(struct, files)
+    return reduce(invoke, cirrus_actions, (struct, opts))
 
 
 def get_requirements() -> List[str]:
