@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from pathlib import Path
 from subprocess import CalledProcessError
 
@@ -23,7 +24,7 @@ def test_generated_extension(tmpfolder):
     cli.main(args)
     with chdir("pyscaffoldext-some_extension"):
         try:
-            run_common_tasks()
+            run_common_tasks(pre_commit=sys.version_info >= (3, 7))
         except CalledProcessError as ex:
             if os.name == "nt" and "too long" in ex.output:
                 pytest.skip("Windows really have a problem with long paths....")
