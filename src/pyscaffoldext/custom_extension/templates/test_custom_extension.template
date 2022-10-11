@@ -48,7 +48,7 @@ def test_add_custom_extension_with_namespace(tmpfolder):
 # To use marks make sure to uncomment them in setup.cfg
 # @pytest.mark.slow
 def test_generated_extension(tmpfolder):
-    use_pre_commit = ["--pre-commit"] if sys.system_info >= (3, 7) else []
+    use_pre_commit = ["--pre-commit"] if sys.version_info >= (3, 7) else []
 
     args = [
         "my_project",
