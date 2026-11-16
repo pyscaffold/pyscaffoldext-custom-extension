@@ -1,4 +1,5 @@
 """Main logic to create custom extensions"""
+
 from functools import partial, reduce
 from typing import List
 
